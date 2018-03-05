@@ -1,0 +1,30 @@
+/* Styles go here */
+.action-row{
+  padding-top:8px;
+}
+.col.section{
+  padding:5px;
+}
+.user-input{
+  width:100%;
+  min-height:300px;
+  font-size:11px;
+  font-family: monospace;
+  background-color: rgba(255,255,255,.8);
+}
+.col.regras{
+  background-color:#aa8fb3;
+}
+.col.contexto{
+  background-color:#8E1F51;
+}
+.col.ai-response{
+  background-color:#E54059;
+}
+.col.retorno{
+  background-color:#DE837F;
+}
+
+.CodeMirror {
+  border: 1px solid #eee;
+}

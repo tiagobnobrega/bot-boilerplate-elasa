@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <script data-require="jquery@*" data-semver="3.1.1" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <link data-require="bootstrap@*" data-semver="4.0.5" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" />
+    <link data-require="toastr@*" data-semver="2.1.2" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.2/toastr.min.css" />
+    <link data-require="codemirror@*" data-semver="4.2.0" rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.2.0/codemirror.css" />
+    <script data-require="codemirror@*" data-semver="4.2.0" src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.2.0/codemirror.js"></script>
+    <script data-require="toastr@*" data-semver="2.1.2" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.2/toastr.min.js"></script>
+    <script data-require="bootstrap@*" data-semver="4.0.5" src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js"></script>
+    <script data-require="lodash.js@*" data-semver="4.16.2" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.16.2/lodash.js"></script>
+    
+    <link rel="stylesheet" href="cm-foldgutter.css" />
+    <link rel="stylesheet" href="cm-xq-light.css" />
+    <script src="cm-foldcode.js"></script>
+    <script src="cm-foldgutter.js"></script>
+    <script src="cm-brace-fold.js"></script>
+    <script src="cm-indent-fold.js"></script>
+    <script src="cm-javascript.js"></script>
+    <script src="cm-matchbrackets.js"></script>
+    <script src="cm-active-lines.js"></script>
+    
+    <link rel="stylesheet" href="style.css" />
+    <script src="dialog.js"></script>
+    <script src="dialogFlowResolver.js"></script>
+    <script src="script.js"></script>
+  </head>
+
+  <body>
+    <h1>Lais - Dailog Flow Control</h1>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col section regras">
+          <div class="row">
+            <div class="col">
+              <label> Definição de regras</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <textarea id="campo-regras" class="user-input"></textarea>
+            </div>
+          </div>
+          <div class="row action-row justify-content-end">
+            <div class="col">
+              <button id="update-regras" type="button" class="btn btn-primary btn-action">Atualizar</button>
+            </div>
+          </div>
+        </div>
+        <div class="col section contexto">
+          <div class="row">
+            <div class="col">
+              <label> Contexto</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <textarea id="campo-contexto" class="user-input"></textarea>
+            </div>
+          </div>
+          <div class="row action-row justify-content-end">
+            <div class="col">
+              <button id="update-contexto" type="button" class="btn btn-primary btn-action">Atualizar</button>
+            </div>
+          </div>
+        </div>
+        <div class="col section ai-response">
+          <div class="row">
+            <div class="col">
+              <label> AI Response</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <textarea id="campo-ai-response" class="user-input">Escreva Aqui!!!</textarea>
+            </div>
+          </div>
+          <div class="row action-row justify-content-end">
+            <div class="col">
+              <button id="update-ai-response" type="button" class="btn btn-primary btn-action">processar</button>
+            </div>
+          </div>
+        </div>
+        <div class="col section retorno">
+          <div class="row">
+            <div class="col">
+              <label>Regra Aplicada</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <textarea disabled="" id="campo-retorno" class="user-input">A regra encontrada será exibida aqui!</textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+
+</html>
