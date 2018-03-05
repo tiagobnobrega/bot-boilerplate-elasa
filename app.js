@@ -73,7 +73,9 @@ const server = restify.createServer({ 'name': "lais-bot" });
 
       const returnReplies = await Promise.all(replies.map(async  reply=>{
         if(reply.type==="function"){
-          reply = await reply.content(prevContextObj,nextContextObj,scripts);
+          const fnValue= await reply.content(prevContextObj,nextContextObj,scripts);
+          reply = fnValue.reply || fnValue;
+          //TODO set context if any returns
         };
 
 
