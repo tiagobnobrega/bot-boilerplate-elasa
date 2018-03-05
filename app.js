@@ -39,7 +39,7 @@ const server = restify.createServer({ 'name': "lais-bot" });
   const UUIDv4 = function b(a){return a?(a^Math.random()*16>>a/4).toString(16):([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,b)}
 
   // Load Dialogs & Rules & startUpdater
-  let dialogEngine = await lais.DialogRemote({updateInterval:5, logLevel:'DEBUG'});
+  let dialogEngine = await lais.DialogRemote({updateInterval:5, logLevel:'TRACE'});
 
   // Start service
   server.post('/api/raw', [bodyParser.json(),
