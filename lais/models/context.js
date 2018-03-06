@@ -56,6 +56,10 @@ class Context {
 
     return plainObject;
   }
+
+  fromPlainObject(options){
+    return new Context(options);
+  }
 }
 
 module.exports = Context;

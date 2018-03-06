@@ -6,14 +6,22 @@ const getCurrency = (userInput)=>{
   // return userInput.match(/[+-]?[0-9]{1,3}(?:[0-9]*(?:[.,][0-9]{2})?|(?:,[0-9]{3})*(?:\.[0-9]{2})?|(?:\.[0-9]{3})*(?:,[0-9]{2})?)/)[0];
   return userInput.match(/[+-]?[0-9]{1,3}(?:\.?[0-9]{3})*[,][0-9]{2}/);
 }
-const handleDadosMudarPreco= async(userInput,userLogin,contextArgs={})=>{
+const handleDadosMudarPreco= async(contextArg={},nextDialogIdOnSuccess)=>{
   let replyMessage = "";
-  let context = {...contextArgs};
+  let context = {...contextArg};
+  const {userId,userMessage} = context;
+
+  const nextDialogOnSuccess = {
+    id: nextDialogIdOnSuccess,
+    minConfidence: 0.6,
+    listenTo: [ 'intents', 'entities' ]
+   };
+
   let valor = context.mudar_preco_valor;
   let mudarPrecoItems = context.mudar_preco_sap;
 
   if(!valor){
-  valor = getCurrency(userInput);
+  valor = getCurrency(userMessage);
   }
 
   if(!valor){
@@ -23,9 +31,9 @@ const handleDadosMudarPreco= async(userInput,userLogin,contextArgs={})=>{
   }
 
   if(!mudarPrecoItems){
-    //TODO: GET USER DATA
-    const departamentos = ['013','023'];
-    mudarPrecoItems = await checkItem(userInput,departamentos);
+    const {user} = await getUserElasa(userId);
+    const departamentos = getUserDepartments(user);
+    mudarPrecoItems = await checkItem(userMessage,departamentos);
   }
   const {status,items,codSap} = mudarPrecoItems;
 
@@ -48,6 +56,7 @@ const handleDadosMudarPreco= async(userInput,userLogin,contextArgs={})=>{
     if(valor){
       replyMessage=`Ok. Deseja alterar o valor do item "${items[0].description}" (${parseInt(codSap)}) para ${valor} ?`;
       context.mudar_preco_sap = codSap;
+      context._dialog = nextDialogOnSuccess;
     }
   }
   return {context,reply:{type:"text",content:replyMessage}};
@@ -103,7 +112,14 @@ const checkItem= async (userInput,departamentos)=>{
   //return {preco:20.19, item:{desc:"teste",dep:12}};
 }
 
-const getUSerElasa = async(login)=>{
+const getUserDepartments = (user)=>{
+  if(!user || !user.managements) return [];
+  return user.managements.reduce((a,b)=>{
+    if(b.departments) return a.concat(b.departments.map((d)=>d.sapCode));
+  },[]);
+}
+
+const getUserElasa = async(login)=>{
 
   let retorno;
 
@@ -112,7 +128,7 @@ const getUSerElasa = async(login)=>{
     
     //Serviço retornou vazio
     if (_.isEmpty(response.data)) {
-      retorno = {status: '1', user: {}};
+      retorno = {status: '1'};
 
       //retorno ok
     } else {
@@ -122,11 +138,11 @@ const getUSerElasa = async(login)=>{
     // erro na requisição
   } catch (err) {
     console.error(err);
-    retorno = {status:'99',message: err.message, user: {}};
+    retorno = {status:'99',message: err.message};
   }
     return retorno;
 };
 
 module.exports = {
-    wait,handleDadosMudarPreco,checkItem,getUSerElasa
+    wait,handleDadosMudarPreco,checkItem,getUserElasa
 };

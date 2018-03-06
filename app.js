@@ -39,7 +39,7 @@ const server = restify.createServer({ 'name': "lais-bot" });
   const UUIDv4 = function b(a){return a?(a^Math.random()*16>>a/4).toString(16):([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,b)}
 
   // Load Dialogs & Rules & startUpdater
-  let dialogEngine = await lais.DialogRemote({updateInterval:5, logLevel:'TRACE'});
+  let dialogEngine = await lais.DialogRemote({updateInterval:5, logLevel:'DEBUG'});
 
   // Start service
   server.post('/api/raw', [bodyParser.json(),
@@ -48,14 +48,14 @@ const server = restify.createServer({ 'name': "lais-bot" });
       console.log('Requisição recebida!');
 
       // Retrive/create context
-      const {contextId:requestContextId, message} = req.body;
+      const {contextId:requestContextId, userId, message} = req.body;
       if(message==="_reset"){
         contextManager.clearAll();
         console.log('cleared contexts')
       }
 
       const contextId = requestContextId || UUIDv4();
-      let context = contextManager.getContext(contextId);
+      let context = contextManager.getContext(contextId,{userId});
 
       // Call laisClient. talk to get user message intents & entities
       const aiResponse = await laisClient.talk(contextId, message);
@@ -76,7 +76,7 @@ const server = restify.createServer({ 'name': "lais-bot" });
           const fnValue= await reply.content(prevContextObj,nextContextObj,scripts);
           reply = fnValue.reply || fnValue;
           //set context if any returns
-          if(fnValue.context) contextManager.setContext(contextId,fnValue.context);
+          if(fnValue.context) contextManager.setContext(contextId, context.fromPlainObject(fnValue.context));
         };
 
         if(reply.type ==="text"){

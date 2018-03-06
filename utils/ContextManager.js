@@ -5,11 +5,11 @@ class ContextManager {
     this.contexts = {};
   }
 
-  getContext(contextId) {
+  getContext(contextId,initialContext) {
     let context = this.contexts[contextId];
 
     if(!context || context.isExpired()) {
-      context = this.contexts[contextId] = new Context({ contextId: contextId });
+      context = this.contexts[contextId] = new Context({ contextId: contextId,...initialContext });
     }
 
     return context;
