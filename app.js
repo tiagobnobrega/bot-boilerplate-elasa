@@ -17,8 +17,8 @@ const appDictionary = require('./utils/dictionary');
 const laisDictionary = lais.Dictionary(appDictionary);
 
 //app scripts
-const scripts = require('./utils/scripts')
-console.log('scripts',scripts)
+const scripts = require('./utils/scripts');
+console.log('scripts',scripts);
 
 // Setup Restify Server
 const server = restify.createServer({ 'name': "lais-bot" });
@@ -75,9 +75,9 @@ const server = restify.createServer({ 'name': "lais-bot" });
         if(reply.type==="function"){
           const fnValue= await reply.content(prevContextObj,nextContextObj,scripts);
           reply = fnValue.reply || fnValue;
-          //TODO set context if any returns
+          //set context if any returns
+          if(fnValue.context) contextManager.setContext(contextId,fnValue.context);
         };
-
 
         if(reply.type ==="text"){
           // console.log('transform reply with context:',reply, prevContextObj)
@@ -86,10 +86,10 @@ const server = restify.createServer({ 'name': "lais-bot" });
         return {...reply};
       }));
 
-      console.log('+++++++++++++++')
-      console.log(replies)
-      console.log(returnReplies);
-      console.log('+++++++++++++++')
+      // console.log('+++++++++++++++')
+      // console.log(replies)
+      // console.log(returnReplies);
+      // console.log('+++++++++++++++')
 
       // Return response
       res.send({contextId, replies: returnReplies});

@@ -5,9 +5,11 @@ const getCurrency = (userInput)=>{
   // return userInput.match(/[+-]?[0-9]{1,3}(?:[0-9]*(?:[.,][0-9]{2})?|(?:,[0-9]{3})*(?:\.[0-9]{2})?|(?:\.[0-9]{3})*(?:,[0-9]{2})?)/)[0];
   return userInput.match(/[+-]?[0-9]{1,3}(?:\.?[0-9]{3})*[,][0-9]{2}/);
 }
-const handleDadosMudarPreco= async(userInput,userLogin,context={})=>{
+const handleDadosMudarPreco= async(userInput,userLogin,contextArgs={})=>{
   let replyMessage = "";
+  let context = {...contextArgs};
   let valor = context.mudar_preco_valor;
+  let mudarPrecoItems = context.mudar_preco_sap;
 
   if(!valor){
   valor = getCurrency(userInput);
@@ -15,37 +17,39 @@ const handleDadosMudarPreco= async(userInput,userLogin,context={})=>{
 
   if(!valor){
     replyMessage+="Informe por favor o valor do novo preço.";
+  }else{
+    context.mudar_preco_valor = valor;
   }
 
-  //TODO: GET USER DATA
-  const departamentos = ['013','023'];
-  const {status,items,codSap} = await checkItem(userInput,departamentos);
+  if(!mudarPrecoItems){
+    //TODO: GET USER DATA
+    const departamentos = ['013','023'];
+    mudarPrecoItems = await checkItem(userInput,departamentos);
+  }
+  const {status,items,codSap} = mudarPrecoItems;
 
   if(status==='0'){
     replyMessage+="Preciso saber o código SAP do item.";
   }
   if(status==='1'){
     replyMessage+=`O código SAP "${parseInt(codSap)}" é inválido. Tente informar novamente`;
-    //TODO: ZERAR CODIGO SAP DO CONTEXTO
   }
 
   if(status==='99'){
-    replyMessage="Ocorreu um erro inesperado. Tente novamento ou consulto o administrador do sistema."
-    //TODO: ZERAR CONTEXTO
+    replyMessage="Ocorreu um erro inesperado. Tente novamento ou consulte o administrador do sistema."
+    context = {};
   }
   if(status==='2'){
-    replyMessage="Seu usuário não tem acesso para alterar este item";
-    //TODO: ZERAR CONTEXTO
+    replyMessage="Seu usuário não tem acesso para alterar este item. Estou aqui se precisar de mais alguma coisa";
+    context = {};
   }
   if(status==='3'){
     if(valor){
       replyMessage=`Ok. Deseja alterar o valor do item "${items[0].description}" (${parseInt(codSap)}) para ${valor} ?`;
+      context.mudar_preco_sap = codSap;
     }
-
   }
-
-  return {context:null,reply:{type:"text",content:replyMessage}};
-
+  return {context,reply:{type:"text",content:replyMessage}};
 };
 
 const checkItem= async (userInput,departamentos)=>{
