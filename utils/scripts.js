@@ -1,4 +1,5 @@
 const axios = require('axios');
+const _ = require('lodash');
 
 const wait= ms => new Promise(resolve => setTimeout(resolve, ms));
 const getCurrency = (userInput)=>{
@@ -98,7 +99,29 @@ const checkItem= async (userInput,departamentos)=>{
   //return {preco:20.19, item:{desc:"teste",dep:12}};
 }
 
-const getUSerElasa = async(login)=>{};
+const getUSerElasa = async(login)=>{
+
+  let retorno;
+
+  try {
+    const response = await axios.post('http://hmlelasa.lasa.lojasamericanas.com.br/v1/user/byUsername/'+login, {}, {headers: {'Content-Type': 'application/json','Authorization': 'Bearer 58efdaf75b921528b09283e4'}});
+    
+    //Serviço retornou vazio
+    if (_.isEmpty(response.data)) {
+      retorno = {status: '1', user: {}};
+
+      //retorno ok
+    } else {
+      retorno = {status: '3', user: response.data};
+    }
+
+    // erro na requisição
+  } catch (err) {
+    console.error(err);
+    retorno = {status:'99',message: err.message, user: {}};
+  }
+    return retorno;
+};
 
 module.exports = {
     wait,handleDadosMudarPreco,checkItem,getUSerElasa
