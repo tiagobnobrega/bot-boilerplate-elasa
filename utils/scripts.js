@@ -3,9 +3,19 @@ const _ = require('lodash');
 
 const wait= ms => new Promise(resolve => setTimeout(resolve, ms));
 const getCurrency = (userInput)=>{
-  // return userInput.match(/[+-]?[0-9]{1,3}(?:[0-9]*(?:[.,][0-9]{2})?|(?:,[0-9]{3})*(?:\.[0-9]{2})?|(?:\.[0-9]{3})*(?:,[0-9]{2})?)/)[0];
-  return userInput.match(/[+-]?[0-9]{1,3}(?:\.?[0-9]{3})*[,][0-9]{2}/);
+  return userInput.match(/[+-]?[0-9]{1,3}(?:\.?[0-9]{3})*[,\.][0-9]{2}/);
+};
+
+const parseCurrency = (valor)=>{
+  valor = valor.replace(',','.');
+  return parseFloat(valor);
+};
+
+const formatCurrency = (valor)=>{
+  let formatted = valor.toFixed(2);
+  return `R$ ${formatted.toString().replace(".",",")}`;
 }
+
 const handleDadosMudarPreco= async(contextArg={},nextDialogIdOnSuccess)=>{
   let replyMessage = "";
   let context = {...contextArg};
@@ -22,6 +32,7 @@ const handleDadosMudarPreco= async(contextArg={},nextDialogIdOnSuccess)=>{
 
   if(!valor){
   valor = getCurrency(userMessage);
+  valor = valor && valor[0] && parseCurrency(valor[0]);
   }
 
   if(!valor){
@@ -53,9 +64,9 @@ const handleDadosMudarPreco= async(contextArg={},nextDialogIdOnSuccess)=>{
     context = {};
   }
   if(status==='3'){
+    context.mudar_preco_sap = mudarPrecoItems;
     if(valor){
-      replyMessage=`Ok. Deseja alterar o valor do item "${items[0].description}" (${parseInt(codSap)}) para ${valor} ?`;
-      context.mudar_preco_sap = codSap;
+      replyMessage=`Ok. Deseja alterar o valor do item "${items[0].description}" (${parseInt(codSap)}) para ${formatCurrency(valor)} ?`;
       context._dialog = nextDialogOnSuccess;
     }
   }

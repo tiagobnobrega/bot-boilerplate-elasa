@@ -63,7 +63,7 @@ const server = restify.createServer({ 'name': "lais-bot" });
       // Use intents to get replies
       const {context:newContext, replies } = dialogEngine.resolve(context, aiResponse, message);
       if(replies.length===0) console.log('No Replies.');
-      console.log('Definindo o contexto:', contextId,newContext);
+      // console.log('Definindo o contexto:', contextId,newContext);
 
       contextManager.setContext(contextId,newContext);
 
@@ -77,6 +77,7 @@ const server = restify.createServer({ 'name': "lais-bot" });
           reply = fnValue.reply || fnValue;
           //set context if any returns
           if(fnValue.context) contextManager.setContext(contextId, context.fromPlainObject(fnValue.context));
+          console.log('Reply. Definir Contexto:',contextManager.getContext(contextId).asPlainObject());
         };
 
         if(reply.type ==="text"){
