@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Boilerplate para BOT Lais",
   "engines": {
-    "node": ">=6.10.2",
+    "node": ">=8.9.4",
     "npm": "4.x"
   },
   "main": "app.js",

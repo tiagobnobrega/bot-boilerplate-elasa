@@ -3,6 +3,7 @@ const _ = require('lodash');
 
 const ELASA_USER_API_URL = process.env.ELASA_USER_API_URL || 'http://hmlelasa.lasa.lojasamericanas.com.br/v1/user/byUsername/';
 const ELASA_ITEM_API_URL = process.env.ELASA_ITEM_API_URL || 'http://hmlpromocao.lasa.lojasamericanas.com.br/v1/item';
+const ELASA_AUTH_TOKEN = process.env.ELASA_AUTH_TOKEN || 'AUTH_TOKEN';//ELASA_AUTH_TOKEN
 
 const wait= ms => new Promise(resolve => setTimeout(resolve, ms));
 const getCurrency = (userInput)=>{
@@ -138,7 +139,7 @@ const getUserElasa = async(login)=>{
   let retorno;
 
   try {
-    const response = await axios.post(ELASA_USER_API_URL+login, {}, {headers: {'Content-Type': 'application/json','Authorization': 'Bearer 58efdaf75b921528b09283e4'}});
+    const response = await axios.post(ELASA_USER_API_URL+login, {}, {headers: {'Content-Type': 'application/json','Authorization': `Bearer ${ELASA_AUTH_TOKEN}`}});
     
     //Serviço retornou vazio
     if (_.isEmpty(response.data)) {
