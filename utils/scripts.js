@@ -1,6 +1,9 @@
 const axios = require('axios');
 const _ = require('lodash');
 
+const ELASA_USER_API_URL = process.env.ELASA_USER_API_URL || 'http://hmlelasa.lasa.lojasamericanas.com.br/v1/user/byUsername/';
+const ELASA_ITEM_API_URL = process.env.ELASA_ITEM_API_URL || 'http://hmlpromocao.lasa.lojasamericanas.com.br/v1/item';
+
 const wait= ms => new Promise(resolve => setTimeout(resolve, ms));
 const getCurrency = (userInput)=>{
   return userInput.match(/[+-]?[0-9]{1,3}(?:\.?[0-9]{3})*[,\.][0-9]{2}/);
@@ -90,7 +93,7 @@ const checkItem= async (userInput,departamentos)=>{
   try {
 
     //chamar serviço com codSAP
-    const response = await axios.post('http://hmlpromocao.lasa.lojasamericanas.com.br/v1/item',{query: codSap}, {headers: {'Content-Type': 'application/json','Authorization': 'Bearer 58efdaf75b921528b09283e4'}});
+    const response = await axios.post(ELASA_ITEM_API_URL,{query: codSap}, {headers: {'Content-Type': 'application/json','Authorization': 'Bearer 58efdaf75b921528b09283e4'}});
 
     retorno = response.data.result;
 
@@ -135,7 +138,7 @@ const getUserElasa = async(login)=>{
   let retorno;
 
   try {
-    const response = await axios.post('http://hmlelasa.lasa.lojasamericanas.com.br/v1/user/byUsername/'+login, {}, {headers: {'Content-Type': 'application/json','Authorization': 'Bearer 58efdaf75b921528b09283e4'}});
+    const response = await axios.post(ELASA_USER_API_URL+login, {}, {headers: {'Content-Type': 'application/json','Authorization': 'Bearer 58efdaf75b921528b09283e4'}});
     
     //Serviço retornou vazio
     if (_.isEmpty(response.data)) {

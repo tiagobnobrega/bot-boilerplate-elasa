@@ -18,7 +18,7 @@ const laisDictionary = lais.Dictionary(appDictionary);
 
 //app scripts
 const scripts = require('./utils/scripts');
-console.log('scripts',scripts);
+// console.log('scripts',scripts);
 
 // Setup Restify Server
 const server = restify.createServer({ 'name': "lais-bot" });
