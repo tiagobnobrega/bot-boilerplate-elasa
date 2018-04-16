@@ -33,8 +33,10 @@
     "mustache": "^2.3.0",
     "node-fetch": "^1.7.1",
     "restify": "^4.3.0",
+    "restify-cors-middleware": "^1.1.0",
     "restify-errors": "^5.0.0",
     "sha1": "^1.1.1",
+    "ssl-root-cas": "^1.2.5",
     "util": "^0.10.3"
   },
   "devDependencies": {

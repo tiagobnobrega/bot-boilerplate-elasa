@@ -5,6 +5,16 @@ const ELASA_USER_API_URL = process.env.ELASA_USER_API_URL || 'http://hmlelasa.la
 const ELASA_ITEM_API_URL = process.env.ELASA_ITEM_API_URL || 'http://hmlpromocao.lasa.lojasamericanas.com.br/v1/item';
 const ELASA_AUTH_TOKEN = process.env.ELASA_AUTH_TOKEN || 'AUTH_TOKEN';//ELASA_AUTH_TOKEN
 
+
+//TODO rejectUntauthorized should not be used, fix certificate issues
+const rootCas = require('ssl-root-cas/latest').create();
+// require('https').globalAgent.options.ca = rootCas;
+const https = require("https");
+const httpsAgent = new https.Agent({
+    rejectUnauthorized: false,
+    ca: rootCas
+})
+
 const wait= ms => new Promise(resolve => setTimeout(resolve, ms));
 const getCurrency = (userInput)=>{
   return userInput.match(/[+-]?[0-9]{1,3}(?:\.?[0-9]{3})*[,\.][0-9]{2}/);
@@ -94,7 +104,7 @@ const checkItem= async (userInput,departamentos)=>{
   try {
 
     //chamar serviço com codSAP
-    const response = await axios.post(ELASA_ITEM_API_URL,{query: codSap}, {headers: {'Content-Type': 'application/json','Authorization': 'Bearer 58efdaf75b921528b09283e4'}});
+    const response = await axios.post(ELASA_ITEM_API_URL,{query: codSap}, {httpsAgent, headers: {'Content-Type': 'application/json','Authorization': `Bearer ${ELASA_AUTH_TOKEN}`}});
 
     retorno = response.data.result;
 
@@ -139,7 +149,7 @@ const getUserElasa = async(login)=>{
   let retorno;
 
   try {
-    const response = await axios.post(ELASA_USER_API_URL+login, {}, {headers: {'Content-Type': 'application/json','Authorization': `Bearer ${ELASA_AUTH_TOKEN}`}});
+    const response = await axios.post(ELASA_USER_API_URL+login, {}, {httpsAgent, headers: {'Content-Type': 'application/json','Authorization': `Bearer ${ELASA_AUTH_TOKEN}`}});
     
     //Serviço retornou vazio
     if (_.isEmpty(response.data)) {

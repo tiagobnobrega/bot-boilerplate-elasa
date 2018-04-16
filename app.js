@@ -1,7 +1,25 @@
 require('dotenv').config();
 require('console-stamp')(console, { pattern: "dd/mm/yyyy HH:MM:ss", label: true });
+
+//#inject ssl root certificates for elasa API calls
+//TODO not working, should also manually add chain certificates
+const rootCas = require('ssl-root-cas/latest').create();
+require('https').globalAgent.options.ca = rootCas;
+
 const restify = require('restify');
 const bodyParser = require('body-parser');
+
+//enable CORS
+const corsMiddleware = require('restify-cors-middleware')
+
+const CORS_ORIGIN=process.env.CORS_ORIGIN && process.env.CORS_ORIGIN.split(";");
+const cors = corsMiddleware({
+    // preflightMaxAge: 5, //Optional
+    origins: CORS_ORIGIN || ['*'],
+    // allowHeaders: ['API-Token'],
+    // exposeHeaders: ['API-Token-Expiry']
+})
+
 
 const axios = require('axios');
 
@@ -23,6 +41,10 @@ const scripts = require('./utils/scripts');
 // Setup Restify Server
 const server = restify.createServer({ 'name': "lais-bot" });
 
+server.pre(cors.preflight);
+server.use(cors.actual);
+
+
 // Setup App
 (async function(){
   // restify async wrapper
@@ -39,7 +61,7 @@ const server = restify.createServer({ 'name': "lais-bot" });
   const UUIDv4 = function b(a){return a?(a^Math.random()*16>>a/4).toString(16):([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,b)}
 
   // Load Dialogs & Rules & startUpdater
-  let dialogEngine = await lais.DialogRemote({updateInterval:5, logLevel:'DEBUG'});
+  let dialogEngine = await lais.DialogRemote({updateInterval:5, logLevel:'TRACE'});
 
   // Start service
   server.post('/api/raw', [bodyParser.json(),
