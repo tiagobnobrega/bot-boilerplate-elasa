@@ -17,11 +17,11 @@ const httpsAgent = new https.Agent({
 
 const wait= ms => new Promise(resolve => setTimeout(resolve, ms));
 const getCurrency = (userInput)=>{
-  return userInput.match(/[+-]?[0-9]{1,3}(?:\.?[0-9]{3})*[,\.][0-9]{2}/);
+  return userInput.match(/\b((((\d{1,2}\.\d{3})|(\d{1,5}))(\,\d+)?)){1}\b/);
 };
 
 const parseCurrency = (valor)=>{
-  valor = valor.replace(',','.');
+  valor = valor.replace('.','').replace(',','.');
   return parseFloat(valor);
 };
 
@@ -40,17 +40,17 @@ const handleDadosMudarPreco= async(contextArg={},nextDialogIdOnSuccess)=>{
     minConfidence: 0.6,
     listenTo: [ 'intents', 'entities' ]
    };
-
+   
   let valor = context.mudar_preco_valor;
   let mudarPrecoItems = context.mudar_preco_sap;
-
+  
   if(!valor){
   valor = getCurrency(userMessage);
   valor = valor && valor[0] && parseCurrency(valor[0]);
   }
 
   if(!valor){
-    replyMessage+="Informe por favor o valor do novo preço.";
+    replyMessage+="Pode me informar, por favor, o valor do novo preço.";
   }else{
     context.mudar_preco_valor = valor;
   }
@@ -63,19 +63,21 @@ const handleDadosMudarPreco= async(contextArg={},nextDialogIdOnSuccess)=>{
   const {status,items,codSap} = mudarPrecoItems;
 
   if(status==='0'){
-    replyMessage+="Preciso saber o código SAP do item.";
+    replyMessage+=" Preciso saber o código SAP do item também.";
   }
   if(status==='1'){
-    replyMessage+=`O código SAP "${parseInt(codSap)}" é inválido. Tente informar novamente`;
+    replyMessage+=` O código SAP "${parseInt(codSap)}" é inválido. Tente novamente, por favor.`;
   }
 
   if(status==='99'){
-    replyMessage="Ocorreu um erro inesperado. Tente novamento ou consulte o administrador do sistema."
+    replyMessage="Ocorreu um erro inesperado. Tente novamente ou consulte o administrador do sistema."
     context = {};
   }
   if(status==='2'){
-    replyMessage="Seu usuário não tem acesso para alterar este item. Estou aqui se precisar de mais alguma coisa";
+    replyMessage="Seu usuário não tem acesso para alterar este item. Caso precise de mais alguma ajuda, estou aqui.";
     context = {};
+    
+    
   }
   if(status==='3'){
     context.mudar_preco_sap = mudarPrecoItems;
@@ -95,6 +97,7 @@ const checkItem= async (userInput,departamentos)=>{
 
   //completar com zeros a esquerda ate ficar com 18 char
   let codSap = codSapArray && codSapArray[0].padStart(18, '0');
+  
 
   // Não foi identificado nenhum codigo sap
   if (codSap === null || codSap === undefined) {
@@ -107,9 +110,11 @@ const checkItem= async (userInput,departamentos)=>{
     const response = await axios.post(ELASA_ITEM_API_URL,{query: codSap}, {httpsAgent, headers: {'Content-Type': 'application/json','Authorization': `Bearer ${ELASA_AUTH_TOKEN}`}});
 
     retorno = response.data.result;
+   
 
-    // Serviço retornou vazio
-    if (response.data === null || response.data.length === 0 || response.data.result.length === 0) {
+    // Serviço retornou vazio 
+    if (_.isEmpty(response.data)|| _.isEmpty(response.data.result)){
+     
       retorno = {status:'1',items: [], codSap};
       // console.log('response done',response.data);
       return retorno;
@@ -117,6 +122,20 @@ const checkItem= async (userInput,departamentos)=>{
 
     //filtrar da lista de itens, departamentos que o usuário não possui acesso
     const userItens = response.data.result.filter((i)=> departamentos.indexOf(i.department.sapCode) >= 0);
+  
+    /*const {userId} = context;
+    const {user} = await getUserElasa(userId);
+    const departamentos = getUserDepartments(user);
+
+    let indice = -1;
+    for(let i=0 ; i<departamentos.length; i++){
+      if(response.data.result.department.sapCode === departamentos[i]){
+        indice = i;
+        break;
+      }
+    }
+    console.log(':::::: INDICE::::::', indice);
+  */
 
     // usuario não tem acesso
     if(userItens.length===0){
@@ -153,6 +172,7 @@ const getUserElasa = async(login)=>{
     
     //Serviço retornou vazio
     if (_.isEmpty(response.data)) {
+      
       retorno = {status: '1'};
 
       //retorno ok

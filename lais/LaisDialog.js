@@ -159,7 +159,7 @@ let LaisDialog = function(initArgs) {
   let isRuleApplicabe = function(rule, context) {
     let isTheSameDialog = rule.dialog === context._dialog.id;
 
-    logger.trace(chalk.yellow("isRuleApplicabe::",printObj(rule)));
+    //logger.trace(chalk.yellow("isRuleApplicabe::",printObj(rule)));
     if(isTheSameDialog){
       logger.trace(chalk.yellow(rule.id+">>"+ curryMatch(rule.match)(context)));
     }
@@ -184,7 +184,7 @@ let LaisDialog = function(initArgs) {
   };
 
   let applyActions = function(rule, context) {
-    logger.trace("applyActions::context="+printObj(context));
+   // logger.trace("applyActions::context="+printObj(context));
     let actions = getMatchingActions(rule, context);
     let replies = [];
 
@@ -201,7 +201,7 @@ let LaisDialog = function(initArgs) {
         }
 
         if (action.evaluateNext === true) {
-          logger.trace("applyActions(2)::context=" + printObj(context));
+          //logger.trace("applyActions(2)::context=" + printObj(context));
           let ret = resolveWithContext(context);//recursion
           context = ret.context;
 
@@ -214,7 +214,7 @@ let LaisDialog = function(initArgs) {
       }
     });
 
-    logger.debug(chalk.grey("applyActions::retrun context="+printObj(context)));
+    //logger.debug(chalk.grey("applyActions::retrun context="+printObj(context)));
     return { context, replies };
   };
 

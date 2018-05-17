@@ -78,6 +78,7 @@ server.use(cors.actual);
 
       const contextId = requestContextId || UUIDv4();
       let context = contextManager.getContext(contextId,{userId});
+      context.userId= userId;
 
       // Call laisClient. talk to get user message intents & entities
       const aiResponse = await laisClient.talk(contextId, message);
