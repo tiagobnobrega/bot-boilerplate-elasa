@@ -49,12 +49,12 @@ const handleDadosMudarPreco= async(contextArg={},nextDialogIdOnSuccess)=>{
   valor = valor && valor[0] && parseCurrency(valor[0]);
   }
 
-  if(!valor){
+ /* if(!valor){
     replyMessage+="Pode me informar, por favor, o valor do novo preço.";
   }else{
     context.mudar_preco_valor = valor;
   }
-
+*/
   if(!mudarPrecoItems){
     const {user} = await getUserElasa(userId);
     const departamentos = getUserDepartments(user);
@@ -62,30 +62,52 @@ const handleDadosMudarPreco= async(contextArg={},nextDialogIdOnSuccess)=>{
   }
   const {status,items,codSap} = mudarPrecoItems;
 
-  if(status==='0'){
-    replyMessage+=" Preciso saber o código SAP do item também.";
-  }
-  if(status==='1'){
-    replyMessage+=` O código SAP "${parseInt(codSap)}" é inválido. Tente novamente, por favor.`;
-  }
+  if(valor){
+    console.log('valor2 '+valor);
+    console.log('status2 '+status);
+    if(status==='0'){
+      context.mudar_preco_valor = valor;
+      replyMessage+= " Preciso saber o código SAP do item também.";
 
+    } else if(status==='1'){
+      context.mudar_preco_valor = valor;
+      replyMessage+=` O código SAP "${parseInt(codSap)}" é inválido. Tente novamente, por favor.`;
+  
+    } else if(status==='2'){
+      replyMessage="Seu usuário não tem acesso para alterar este item. Caso precise de mais alguma ajuda, estou aqui.";
+      context = {};
+    
+    } else if(status==='3'){
+      context.mudar_preco_sap = mudarPrecoItems;
+      replyMessage=`Ok. Deseja alterar o valor do item "${items[0].description}" (${parseInt(codSap)}) para ${formatCurrency(valor)} ?`;
+      context._dialog = nextDialogOnSuccess;
+    }
+
+  } else {
+    console.log('valor1 '+valor);
+    console.log('status1 '+status);
+    if (status==='0'){
+      replyMessage+="Pode me informar, por favor, o valor do novo preço e o código SAP do item?";
+    
+    } else if(status==='1'){
+      replyMessage+=` O código SAP "${parseInt(codSap)}" é inválido. Tente novamente, por favor.`;
+    
+    } else if(status==='2'){
+      replyMessage="Seu usuário não tem acesso para alterar este item. Caso precise de mais alguma ajuda, estou aqui.";
+      context = {};
+      
+    }  else if(status==='3'){
+      context.mudar_preco_sap = mudarPrecoItems;
+      replyMessage+="Pode informar, por favor, o valor do novo preço?";
+
+    }
+  }
+  
   if(status==='99'){
     replyMessage="Ocorreu um erro inesperado. Tente novamente ou consulte o administrador do sistema."
     context = {};
   }
-  if(status==='2'){
-    replyMessage="Seu usuário não tem acesso para alterar este item. Caso precise de mais alguma ajuda, estou aqui.";
-    context = {};
-    
-    
-  }
-  if(status==='3'){
-    context.mudar_preco_sap = mudarPrecoItems;
-    if(valor){
-      replyMessage=`Ok. Deseja alterar o valor do item "${items[0].description}" (${parseInt(codSap)}) para ${formatCurrency(valor)} ?`;
-      context._dialog = nextDialogOnSuccess;
-    }
-  }
+
   return {context,reply:{type:"text",content:replyMessage}};
 };
 
