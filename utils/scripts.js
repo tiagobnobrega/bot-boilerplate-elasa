@@ -16,7 +16,7 @@ const httpsAgent = new https.Agent({
 })
 
 const wait= ms => new Promise(resolve => setTimeout(resolve, ms));
-const getCurrency = (userInput)=>{
+const getCurrency = (userInput='')=>{
   return userInput.match(/\b((((\d{1,2}\.\d{3})|(\d{1,5}))(\,\d+)?)){1}\b/);
 };
 
