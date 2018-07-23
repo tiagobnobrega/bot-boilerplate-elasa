@@ -40,10 +40,10 @@ const handleDadosMudarPreco= async(contextArg={},nextDialogIdOnSuccess)=>{
     minConfidence: 0.6,
     listenTo: [ 'intents', 'entities' ]
    };
-   
+
   let valor = context.mudar_preco_valor;
   let mudarPrecoItems = context.mudar_preco_sap;
-  
+
   if(!valor){
   valor = getCurrency(userMessage);
   valor = valor && valor[0] && parseCurrency(valor[0]);
@@ -72,11 +72,11 @@ const handleDadosMudarPreco= async(contextArg={},nextDialogIdOnSuccess)=>{
     } else if(status==='1'){
       context.mudar_preco_valor = valor;
       replyMessage+=` O código SAP "${parseInt(codSap)}" é inválido. Tente novamente, por favor.`;
-  
+
     } else if(status==='2'){
       replyMessage="Seu usuário não tem acesso para alterar este item. Caso precise de mais alguma ajuda, estou aqui.";
       context = {};
-    
+
     } else if(status==='3'){
       context.mudar_preco_sap = mudarPrecoItems;
       replyMessage=`Ok. Deseja alterar o valor do item "${items[0].description}" (${parseInt(codSap)}) para ${formatCurrency(valor)} ?`;
@@ -88,21 +88,21 @@ const handleDadosMudarPreco= async(contextArg={},nextDialogIdOnSuccess)=>{
     console.log('status1 '+status);
     if (status==='0'){
       replyMessage+="Pode me informar, por favor, o valor do novo preço e o código SAP do item?";
-    
+
     } else if(status==='1'){
       replyMessage+=` O código SAP "${parseInt(codSap)}" é inválido. Tente novamente, por favor.`;
-    
+
     } else if(status==='2'){
       replyMessage="Seu usuário não tem acesso para alterar este item. Caso precise de mais alguma ajuda, estou aqui.";
       context = {};
-      
+
     }  else if(status==='3'){
       context.mudar_preco_sap = mudarPrecoItems;
       replyMessage+="Pode informar, por favor, o valor do novo preço?";
 
     }
   }
-  
+
   if(status==='99'){
     replyMessage="Ocorreu um erro inesperado. Tente novamente ou consulte o administrador do sistema."
     context = {};
@@ -119,7 +119,7 @@ const checkItem= async (userInput,departamentos)=>{
 
   //completar com zeros a esquerda ate ficar com 18 char
   let codSap = codSapArray && codSapArray[0].padStart(18, '0');
-  
+
 
   // Não foi identificado nenhum codigo sap
   if (codSap === null || codSap === undefined) {
@@ -132,11 +132,11 @@ const checkItem= async (userInput,departamentos)=>{
     const response = await axios.post(ELASA_ITEM_API_URL,{query: codSap}, {httpsAgent, headers: {'Content-Type': 'application/json','Authorization': `Bearer ${ELASA_AUTH_TOKEN}`}});
 
     retorno = response.data.result;
-   
 
-    // Serviço retornou vazio 
+
+    // Serviço retornou vazio
     if (_.isEmpty(response.data)|| _.isEmpty(response.data.result)){
-     
+
       retorno = {status:'1',items: [], codSap};
       // console.log('response done',response.data);
       return retorno;
@@ -144,7 +144,7 @@ const checkItem= async (userInput,departamentos)=>{
 
     //filtrar da lista de itens, departamentos que o usuário não possui acesso
     const userItens = response.data.result.filter((i)=> departamentos.indexOf(i.department.sapCode) >= 0);
-  
+
     /*const {userId} = context;
     const {user} = await getUserElasa(userId);
     const departamentos = getUserDepartments(user);
@@ -191,10 +191,10 @@ const getUserElasa = async(login)=>{
 
   try {
     const response = await axios.post(ELASA_USER_API_URL+login, {}, {httpsAgent, headers: {'Content-Type': 'application/json','Authorization': `Bearer ${ELASA_AUTH_TOKEN}`}});
-    
+
     //Serviço retornou vazio
     if (_.isEmpty(response.data)) {
-      
+
       retorno = {status: '1'};
 
       //retorno ok
@@ -210,6 +210,73 @@ const getUserElasa = async(login)=>{
     return retorno;
 };
 
+
+const handleFileValidation = ({
+                                  userInputData = {},
+                                  messageMapper,
+                                  successMessage = "Sua solicitação está sendo processada.",
+                                  errorMessage = "Ocorreram erros no processamento do arquivo.",
+                                  invalidActionMesssage = "Infelizmente não sou capaz de processar este tipo de ação."
+                              }) => {
+
+    if (userInputData.action !== 'normal_price.file_validation') {
+        return {context: {}, reply: {type: "text", content: invalidActionMesssage+". action="+userInputData.action}};
+    }
+
+    messageMapper = {
+        'UNKNOWN': m => ({type: 'error', text: `Um erro inesperado ocorreu ao processar o arquivo: ${m.code}`}),
+        '100': m => ({type: 'success', text: 'Processo realizado com sucesso'}),
+        '200': m => ({type: 'error', text: 'Ocorreu um erro no servidor'}),
+        '201': m => ({
+            type: 'error',
+            text: `Formato de arquivo inválido. Esperado: "${m.context && m.context.expected}", recebido: ${m.context && m.context.format}`
+        }),
+        '202': m => ({
+            type: 'error',
+            text: `Não é possível enviar preço normal após: ${m.context && m.context.timelimit}`
+        }),
+        '300': m => ({type: 'error', text: `Não foi possível processar o arquivo`}),
+        '301': m => ({
+            type: 'warning',
+            text: `O item ${m.context && m.context.item}, na linha ${m.context && m.context.line} não foi encontrado na base`
+        }),
+        '302': m => ({
+            type: 'warning',
+            text: `O item ${m.context && m.context.item}, na linha ${m.context && m.context.line}, com departamento ${m.context && m.context.department} não foi importado porque você não tem permissão neste departamento`
+        }),
+        ...messageMapper
+    };
+
+    const hasErrors = !!userInputData.messages.filter(m => m.code !== '100').length;
+    const messages = userInputData.messages.map(m => {
+        const mapper = messageMapper[m.code] || messageMapper['UNKNOWN'];
+        return mapper(m);
+    });
+
+    if (hasErrors) {
+        return {
+            reply: {
+                "type": "modal",
+                "payload": {
+                    "content": errorMessage,
+                    messages
+                }
+            }
+        }
+            ;
+    } else {
+        return {
+            reply: {
+                "type": "action",
+                "payload": {
+                    "action": "normal_price.send_file",
+                    "content": successMessage,
+                }
+            }
+        }
+    }
+};
+
 module.exports = {
-    wait,handleDadosMudarPreco,checkItem,getUserElasa
+    wait, handleDadosMudarPreco, checkItem, getUserElasa, handleFileValidation
 };

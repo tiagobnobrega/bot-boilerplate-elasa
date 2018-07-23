@@ -162,8 +162,7 @@ const getReturnReplies = async (replies, prevContextObj, nextContextObj,scripts,
         ;
         return {...reply};
     }));
-}
-
+};
 
 const handleReset = (message) => {
     if (message === "_reset") {
@@ -175,6 +174,7 @@ const handleReset = (message) => {
 
 
 const setupServer = async server => {
+    try{
     console.log(startChalk('Configuring CORS...'));
     server.pre(cors.preflight);
     server.use(cors.actual);
@@ -190,7 +190,9 @@ const setupServer = async server => {
     });
 
     console.log(startChalk('Server configured. Ready to use!'))
-
+    }catch (e) {
+        console.error("Error on server setup",e);
+    }
 };
 setupServer(server);
 
