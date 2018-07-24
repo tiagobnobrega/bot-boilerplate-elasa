@@ -131,11 +131,29 @@ const chatMessagePost = async (req, res) => {
 
         const returnReplies = await getReturnReplies(replies, prevContextObj, nextContextObj, scripts, contextId, context);
 
-        res.send({contextId, replies: returnReplies});
+        res.send({contextId, replies: normalizeReplies(returnReplies)});
     } catch (err) {
         console.error(err);
         res.send({type: 'error', message: err.message, stack: err.stack});
     }
+};
+
+/**
+ * Normalize text replies to conform with client format
+ * @param replies
+ */
+const normalizeReplies = (replies)=>{
+    return replies.map(r=>{
+        if(r.type==='text'){
+            const {content, ...rest} = {
+                ...r,
+                payload:r.content,
+            };
+            return rest;
+        }else{
+            return r;
+        }
+    })
 };
 
 const getReturnReplies = async (replies, prevContextObj, nextContextObj,scripts, contextId, context) => {

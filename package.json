@@ -8,7 +8,7 @@
   },
   "main": "app.js",
   "scripts": {
-    "test": "echo 'implement testing'",
+    "test": "jest",
     "start": "node app.js"
   },
   "keywords": [
@@ -40,6 +40,7 @@
     "util": "^0.10.3"
   },
   "devDependencies": {
-    "fs": "0.0.1-security"
+    "fs": "0.0.1-security",
+    "jest": "^23.4.1"
   }
 }
