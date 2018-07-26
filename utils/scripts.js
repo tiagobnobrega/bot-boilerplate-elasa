@@ -1,8 +1,8 @@
 const axios = require('axios');
 const _ = require('lodash');
 
-const ELASA_USER_API_URL = process.env.ELASA_USER_API_URL || 'http://hmlelasa.lasa.lojasamericanas.com.br/v1/user/byUsername/';
-const ELASA_ITEM_API_URL = process.env.ELASA_ITEM_API_URL || 'http://hmlpromocao.lasa.lojasamericanas.com.br/v1/item';
+const ELASA_USER_API_URL = process.env.ELASA_USER_API_URL || 'http://ELASA_USER_API_URL---NOT_DEFINED';
+const ELASA_ITEM_API_URL = process.env.ELASA_ITEM_API_URL || 'http://ELASA_ITEM_API_URL---NOT_DEFINED';
 const ELASA_AUTH_TOKEN = process.env.ELASA_AUTH_TOKEN || 'AUTH_TOKEN';//ELASA_AUTH_TOKEN
 
 
@@ -35,6 +35,8 @@ const handleDadosMudarPreco= async(contextArg={},nextDialogIdOnSuccess)=>{
   let context = {...contextArg};
   const {userId,userMessage} = context;
 
+    console.log("handleDadosMudarPreco.userMessage:"+userMessage);
+
   const nextDialogOnSuccess = {
     id: nextDialogIdOnSuccess,
     minConfidence: 0.6,
@@ -62,9 +64,9 @@ const handleDadosMudarPreco= async(contextArg={},nextDialogIdOnSuccess)=>{
   }
   const {status,items,codSap} = mudarPrecoItems;
 
+  console.log('@@@@@@@@@@@@checkItem:',mudarPrecoItems);
   if(valor){
-    console.log('valor2 '+valor);
-    console.log('status2 '+status);
+
     if(status==='0'){
       context.mudar_preco_valor = valor;
       replyMessage+= " Preciso saber o código SAP do item também.";
@@ -84,8 +86,6 @@ const handleDadosMudarPreco= async(contextArg={},nextDialogIdOnSuccess)=>{
     }
 
   } else {
-    console.log('valor1 '+valor);
-    console.log('status1 '+status);
     if (status==='0'){
       replyMessage+="Pode me informar, por favor, o valor do novo preço e o código SAP do item?";
 
@@ -108,7 +108,42 @@ const handleDadosMudarPreco= async(contextArg={},nextDialogIdOnSuccess)=>{
     context = {};
   }
 
+  console.log('handleMudarPreco.replyMessage=',replyMessage);
+
   return {context,reply:{type:"text",content:replyMessage}};
+};
+
+const handleJustMudarPreco = async(contextArg={},nextDialogIdOnSuccess)=>{
+    let context = {...contextArg};
+    const {userId,userMessage} = context;
+
+    console.log("handleJustMudarPreco.userMessage:"+userMessage);
+    const nextDialogOnSuccess = {
+        id: nextDialogIdOnSuccess,
+        minConfidence: 0.6,
+        listenTo: [ 'intents', 'entities' ]
+    };
+
+    let valor = context.mudar_preco_valor;
+    let mudarPrecoItems = context.mudar_preco_sap;
+
+    if(!valor){
+        valor = getCurrency(userMessage);
+        valor = valor && valor[0] && parseCurrency(valor[0]);
+    };
+
+    if(!mudarPrecoItems){
+        const {user} = await getUserElasa(userId);
+        const departamentos = getUserDepartments(user);
+        mudarPrecoItems = await checkItem(userMessage,departamentos);
+    }
+    // const {status,items,codSap} = mudarPrecoItems;
+
+    context.mudar_preco_valor = valor;
+    context.mudar_preco_sap = mudarPrecoItems;
+
+    return {context};
+
 };
 
 const checkItem= async (userInput,departamentos)=>{
@@ -119,8 +154,7 @@ const checkItem= async (userInput,departamentos)=>{
 
   //completar com zeros a esquerda ate ficar com 18 char
   let codSap = codSapArray && codSapArray[0].padStart(18, '0');
-
-
+  ;
   // Não foi identificado nenhum codigo sap
   if (codSap === null || codSap === undefined) {
     return {status: '0', items: [], codSap};
@@ -128,11 +162,13 @@ const checkItem= async (userInput,departamentos)=>{
 
   try {
 
+    console.log('CheckItem.Requesting:'+ELASA_ITEM_API_URL+"?codSap="+codSap);
     //chamar serviço com codSAP
     const response = await axios.post(ELASA_ITEM_API_URL,{query: codSap}, {httpsAgent, headers: {'Content-Type': 'application/json','Authorization': `Bearer ${ELASA_AUTH_TOKEN}`}});
 
     retorno = response.data.result;
 
+      console.log('CheckItem.Returned:',response.data);
 
     // Serviço retornou vazio
     if (_.isEmpty(response.data)|| _.isEmpty(response.data.result)){
@@ -190,8 +226,26 @@ const getUserElasa = async(login)=>{
   let retorno;
 
   try {
-    const response = await axios.post(ELASA_USER_API_URL+login, {}, {httpsAgent, headers: {'Content-Type': 'application/json','Authorization': `Bearer ${ELASA_AUTH_TOKEN}`}});
 
+      let response = null;
+    try{
+
+    response = await axios.post(ELASA_USER_API_URL+login, {}, {httpsAgent, headers: {'Content-Type': 'application/json','Authorization': `Bearer ${ELASA_AUTH_TOKEN}`}});
+
+    }catch (error) {
+        if (error.response) {
+            console.error('getUser request failed:',error.response.data);
+        } else if (error.request) {
+            // The request was made but no response was received
+            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+            // http.ClientRequest in node.js
+            console.log('getUser error requesting:',error.request);
+        } else {
+            // Something happened in setting up the request that triggered an Error
+            console.log('getUser error setting up request', error.message);
+        }
+        throw e;
+    }
     //Serviço retornou vazio
     if (_.isEmpty(response.data)) {
 
@@ -278,5 +332,5 @@ const handleFileValidation = ({
 };
 
 module.exports = {
-    wait, handleDadosMudarPreco, checkItem, getUserElasa, handleFileValidation
+    wait, handleDadosMudarPreco, checkItem, getUserElasa, handleFileValidation, handleJustMudarPreco
 };

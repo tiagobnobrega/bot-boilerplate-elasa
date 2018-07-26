@@ -165,7 +165,6 @@ const getReturnReplies = async (replies, prevContextObj, nextContextObj,scripts,
             if (fnValue.context) contextManager.setContext(contextId, context.fromPlainObject(fnValue.context));
             console.log('Reply. Definir Contexto:', contextManager.getContext(contextId).asPlainObject());
         }
-        ;
 
         if (reply.type === "text") {
             // console.log('transform reply with context:',reply, prevContextObj)
