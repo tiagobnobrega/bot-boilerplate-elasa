@@ -30,7 +30,7 @@ const formatCurrency = (valor)=>{
   return `R$ ${formatted.toString().replace(".",",")}`;
 }
 
-const handleDadosMudarPreco= async(contextArg={},nextDialogIdOnSuccess)=>{
+const handleJustMudarPreco = async(contextArg={},nextDialogIdOnSuccess)=>{
   let replyMessage = "";
   let context = {...contextArg};
   const {userId,userMessage} = context;
@@ -40,9 +40,39 @@ const handleDadosMudarPreco= async(contextArg={},nextDialogIdOnSuccess)=>{
     minConfidence: 0.6,
     listenTo: [ 'intents', 'entities' ]
    };
+  let valor = getCurrency(userMessage);
+  
+  valor = valor && valor[0] && parseCurrency(valor[0]);
+  context.mudar_preco_valor = valor;
+  
+
+  let codSapArray = userMessage.match(/\b[\d]{6,}\b/);
+  let codSap = codSapArray && codSapArray[0].padStart(18, '0');
+  context.mudar_preco_sap = codSap;
+   
+  context._dialog = nextDialogOnSuccess;
+  
+  return {context,reply:{type:"text",content:replyMessage}};
+};
+
+const handleDadosMudarPreco= async(contextArg={},nextDialogIdOnSuccess)=>{
+  let replyMessage = "";
+  let context = {...contextArg};
+  const {userId,userMessage} = context;
+  let mensagem = userMessage;
+
+  const nextDialogOnSuccess = {
+    id: nextDialogIdOnSuccess,
+    minConfidence: 0.6,
+    listenTo: [ 'intents', 'entities' ]
+   };
    
   let valor = context.mudar_preco_valor;
+  console.log(valor);
   let mudarPrecoItems = context.mudar_preco_sap;
+  console.log(mudarPrecoItems);
+  
+  
   
   if(!valor){
   valor = getCurrency(userMessage);
@@ -55,22 +85,32 @@ const handleDadosMudarPreco= async(contextArg={},nextDialogIdOnSuccess)=>{
     context.mudar_preco_valor = valor;
   }
 */
-  if(!mudarPrecoItems){
+
+  if (mudarPrecoItems && mudarPrecoItems.status === undefined) {
+    mensagem = context.mudar_preco_sap;
+    console.log('MENSAGEM',mensagem);
+  }
+
+  if(!mudarPrecoItems || mudarPrecoItems.status === undefined){
     const {user} = await getUserElasa(userId);
     const departamentos = getUserDepartments(user);
-    mudarPrecoItems = await checkItem(userMessage,departamentos);
+    mudarPrecoItems = await checkItem(mensagem,departamentos);
   }
+  console.log(':::::: if não tem mudar preço:::::::',mudarPrecoItems);
+
   const {status,items,codSap} = mudarPrecoItems;
+  
 
   if(valor){
-    console.log('valor2 '+valor);
-    console.log('status2 '+status);
+    
     if(status==='0'){
       context.mudar_preco_valor = valor;
+      context.mudar_preco_sap = null;
       replyMessage+= " Preciso saber o código SAP do item também.";
 
     } else if(status==='1'){
       context.mudar_preco_valor = valor;
+      context.mudar_preco_sap = null;
       replyMessage+=` O código SAP "${parseInt(codSap)}" é inválido. Tente novamente, por favor.`;
   
     } else if(status==='2'){
@@ -78,19 +118,20 @@ const handleDadosMudarPreco= async(contextArg={},nextDialogIdOnSuccess)=>{
       context = {};
     
     } else if(status==='3'){
+      context.mudar_preco_valor = valor;
       context.mudar_preco_sap = mudarPrecoItems;
       replyMessage=`Ok. Deseja alterar o valor do item "${items[0].description}" (${parseInt(codSap)}) para ${formatCurrency(valor)} ?`;
       context._dialog = nextDialogOnSuccess;
     }
 
   } else {
-    console.log('valor1 '+valor);
-    console.log('status1 '+status);
     if (status==='0'){
       replyMessage+="Pode me informar, por favor, o valor do novo preço e o código SAP do item?";
+      
     
     } else if(status==='1'){
       replyMessage+=` O código SAP "${parseInt(codSap)}" é inválido. Tente novamente, por favor.`;
+      context.mudar_preco_sap = null;
     
     } else if(status==='2'){
       replyMessage="Seu usuário não tem acesso para alterar este item. Caso precise de mais alguma ajuda, estou aqui.";
@@ -211,5 +252,5 @@ const getUserElasa = async(login)=>{
 };
 
 module.exports = {
-    wait,handleDadosMudarPreco,checkItem,getUserElasa
+    wait,handleJustMudarPreco,handleDadosMudarPreco,checkItem,getUserElasa
 };
