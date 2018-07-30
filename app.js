@@ -1,6 +1,6 @@
 require('dotenv').config();
 require('console-stamp')(console, {pattern: "dd/mm/yyyy HH:MM:ss", label: true});
-
+const _ = require('lodash');
 // --- restify --- //
 const restify = require('restify');
 const bodyParser = require('body-parser');
@@ -144,7 +144,7 @@ const chatMessagePost = async (req, res) => {
  */
 const normalizeReplies = (replies)=>{
     return replies.map(r=>{
-        if(r.type==='text'){
+        if(r && r.type==='text'){
             const {content, ...rest} = {
                 ...r,
                 payload:r.content,
@@ -153,20 +153,20 @@ const normalizeReplies = (replies)=>{
         }else{
             return r;
         }
-    })
+    }).filter(r=>r);//filtrar regras falsy
 };
 
 const getReturnReplies = async (replies, prevContextObj, nextContextObj,scripts, contextId, context) => {
     return Promise.all(replies.map(async reply => {
         if (reply.type === "function") {
             const fnValue = await reply.content(prevContextObj, nextContextObj, scripts);
-            reply = fnValue.reply || fnValue;
+            reply = fnValue.reply || (_.isString(fnValue) && fnValue) ;
             //set context if any returns
             if (fnValue.context) contextManager.setContext(contextId, context.fromPlainObject(fnValue.context));
             console.log('Reply. Definir Contexto:', contextManager.getContext(contextId).asPlainObject());
         }
 
-        if (reply.type === "text") {
+        if (reply && reply.type === "text") {
             // console.log('transform reply with context:',reply, prevContextObj)
             return {
                 ...reply,
@@ -176,15 +176,16 @@ const getReturnReplies = async (replies, prevContextObj, nextContextObj,scripts,
                 })
             };
         }
-        ;
-        return {...reply};
+        if(reply){
+            return  {...reply};
+        }
     }));
 };
 
 const handleReset = (message) => {
     if (message === "_reset") {
         contextManager.clearAll();
-        console.log('cleared contexts')
+        console.log('cleared contexts');
         return true;
     }
 };
