@@ -79,7 +79,7 @@ const UUIDv4 = function b(a) {
     return a ? (a ^ Math.random() * 16 >> a / 4).toString(16) : ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, b)
 };
 
-const MESSAGE_TYPES = {TEXT: 'text', FILE: 'file'};
+const MESSAGE_TYPES = {TEXT: 'text', ACTION: 'action'};
 
 const getMessageData = reqBody => {
     let text, data;
@@ -89,8 +89,8 @@ const getMessageData = reqBody => {
 
     if (type === MESSAGE_TYPES.TEXT) {
         text = payload;
-    } else if (type === MESSAGE_TYPES.FILE) {
-        text = '@@FILE@@';
+    } else if (type === MESSAGE_TYPES.ACTION) {
+        text = '@@ACTION@@';
         data = payload;
     }
     return {text, data};
@@ -109,7 +109,7 @@ const chatMessagePost = async (req, res) => {
         const {text: messageText, data: messageData} = getMessageData(req.body);
 
 
-        let aiResponse = {intents:[], entities:[]};//TODO validar se não precisa ter atributo intents e entities vazios
+        let aiResponse = {intents:[], entities:[]}; //TODO validar se não precisa ter atributo intents e entities vazios
         if (messageText) {
             // Call laisClient. talk to get user message intents & entities
             aiResponse = await laisClient.talk(contextId, messageText);
@@ -118,7 +118,9 @@ const chatMessagePost = async (req, res) => {
         context.userInputType = type;
         context.userInputData = messageData;
 
-        console.log()
+        context = scripts.resolveCurrency(messageText, context);
+        context = scripts.resolveSapCode(messageText, context);
+
         // Use intents to get replies
         const {context: newContext, replies} = dialogEngine.resolve(context, aiResponse, messageText);
         if (replies.length === 0) console.log('No Replies.');

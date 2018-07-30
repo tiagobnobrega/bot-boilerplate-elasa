@@ -6,7 +6,12 @@ const RTCompiler = function(args){
     me.require = function(code) {
         if(!(typeof code === "string")) throw new Error(`Cannot compile code ${code}. Only strings allowed`);
         sandbox.module.exports = null;
+        try{
         vm.runInNewContext(code,sandbox);
+        }catch (e) {
+            console.error('Error evaluating code:'+code);
+            throw e;
+        }
         return sandbox.module.exports;
     };
     me.compileAttributes = (obj,...attrs)=>{
