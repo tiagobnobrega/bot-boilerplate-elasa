@@ -1,10 +1,10 @@
 const axios = require('axios');
 const _ = require('lodash');
+const numeral = require('numeral');
 
 const ELASA_USER_API_URL = process.env.ELASA_USER_API_URL || 'http://ELASA_USER_API_URL---NOT_DEFINED';
 const ELASA_ITEM_API_URL = process.env.ELASA_ITEM_API_URL || 'http://ELASA_ITEM_API_URL---NOT_DEFINED';
 const ELASA_AUTH_TOKEN = process.env.ELASA_AUTH_TOKEN || 'AUTH_TOKEN';//ELASA_AUTH_TOKEN
-
 
 //TODO rejectUntauthorized should not be used, fix certificate issues
 const rootCas = require('ssl-root-cas/latest').create();
@@ -13,7 +13,26 @@ const https = require("https");
 const httpsAgent = new https.Agent({
     rejectUnauthorized: false,
     ca: rootCas
-})
+});
+
+numeral.register('locale', 'br', {
+    delimiters: {
+        thousands: '.',
+        decimal: ','
+    },
+    abbreviations: {
+        thousand: 'k',
+        million: 'Mi',
+        billion: 'Bi',
+        trillion: 'Tri'
+    },
+    ordinal : (number)=>'°',
+    currency: {
+        symbol: 'R$'
+    }
+});
+numeral.locale('br');
+
 
 const getCurrency = (userInput = '') => {
     return userInput.match(/\b((((\d{1,2}\.\d{3})|(\d{1,5}))(\,\d+)?)){1}\b/);
@@ -24,11 +43,17 @@ const parseCurrency = (valor) => {
     return parseFloat(valor);
 };
 
+const formatCodSap = (valor)=>{
+  return parseInt(valor).toString();
+};
+
+const formatCurrency = val => numeral(val).format('$ 0,0.00');
+
 const resolveCurrency = (message, context) => {
     let valor = getCurrency(message);
     valor = valor && valor[0] && parseCurrency(valor[0]);
     if (valor) {
-        return {...context, currency: valor};
+        return {...context, currency: valor, currencyFmt:formatCurrency(valor)};
     }
     return context;
 };
@@ -47,13 +72,8 @@ const resolveSapCode = (message, context) => {
     }
     ;
 
-    return {...context, codSapCandidate: codSap};
+    return {...context, codSapCandidate: codSap, codSapCandidateFmt:formatCodSap(codSap)};
 
-};
-
-const formatCurrency = (valor) => {
-    let formatted = valor.toFixed(2);
-    return `R$ ${formatted.toString().replace(".", ",")}`;
 };
 
 const actionRequestMessageMapper = {
