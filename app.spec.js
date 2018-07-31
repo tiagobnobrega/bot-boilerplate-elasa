@@ -1,5 +1,6 @@
 const axios = require('axios');
 require('dotenv').config();
+const chalk = require('chalk');
 
 const PORT = process.env.PORT || 80;
 const BASE_URL = 'http://localhost';
@@ -10,8 +11,10 @@ const axiosClient = axios.create({
     // headers: {'X-Custom-Header': 'foobar'}
 });
 
+jest.setTimeout(7000);
+
 const buildNewSession = () => ({
-    conversationId: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
+    contextId: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
     user: "app.spec"
 });
 
@@ -22,7 +25,7 @@ const postMessage = async (msgObject) => {
         const ret = await axiosClient.post('/api/raw', postData);
         return ret.data;
     } catch (e) {
-        conosle.error(e);
+        console.error(e);
         return e;
     }
 };
@@ -46,7 +49,9 @@ const expectFileMessageTypeEnum = m => {
     expect(['success', 'warning', 'error']).toContain(m.type);
 };
 
-console.info("Don't forget to start local server with 'yarn start' command.");
+console.info(chalk.black.bgBlue("Don't forget to start local server with 'yarn start' command."));
+console.info(chalk.black.bgYellow.bold("Estes são testes integrados, seu funcionamento depende do conteúdo das respostas cadastradas no fluxo de dialogos e treinamento de intenções e entidades."));
+console.info(chalk.black.bgYellow.bold("Alterações no fluxo devem ser refletidas nos testes para o sucesso de sua execução"));
 
 describe('Testes integrados do bot', () => {
 
@@ -168,21 +173,110 @@ describe('Testes integrados do bot', () => {
     });
 
     describe('Alteração de preço normal', () => {
-        test('mudar preço sem definir tipo',async ()=>{});
+        test('mudar preço sem definir tipo', async () => {
+            const {replies} = await postTextMessage('mudar preço de um item');
+            expect(replies).toHaveLength(1);
+            expect(replies[0]).toMatchObject({
+                "type": "text",
+                "payload": "Eu consigo alterar apenas preço normal. Você gostaria de prosseguir?"
+            });
+        });
 
-        test('mudar preço normal passando SEM passar SAP ou valor',async ()=>{});
+        test('mudar preço normal SEM passar SAP ou valor', async () => {
+            const {replies} = await postTextMessage('mudar preço normal de um item');
+            expect(replies).toHaveLength(1);
+            expect(replies[0]).toMatchObject({
+                "type": "text",
+                "payload": "Pode me informar, por favor, o valor do novo preço e o código SAP do item?"
+            });
+        });
 
-        test('mudar preço normal passando apenas o código SAP',async ()=>{});
+        test('mudar preço normal passando apenas o código SAP', async () => {
+            const {replies} = await postTextMessage('mudar preço normal do item 2134567');
+            expect(replies).toHaveLength(1);
+            expect(replies[0]).toMatchObject({
+                "type": "text",
+                "payload": "Pode informar, por favor, o valor do novo preço?"
+            });
+        });
 
-        test('mudar preço normal passando apenas o valor',async ()=>{});
+        test('mudar preço normal passando apenas o valor', async () => {
+            const {replies} = await postTextMessage('mudar preço normal de um item para 20,44 reais');
+            expect(replies).toHaveLength(1);
+            expect(replies[0]).toMatchObject({
+                "type": "text",
+                "payload": "Preciso saber o código SAP do item também"
+            });
+        });
 
-        test('mudar preço normal passando valor e código SAP',async ()=>{});
+        test('mudar preço normal passando valor e código SAP', async () => {
+            const {replies} = await postTextMessage('mudar preço normal um item para 20 reais de sap 2134567');
+            expect(replies).toHaveLength(1);
+            expect(replies[0]).toMatchObject({
+                "type": "action",
+                "payload": {
+                    "action": "normal_price.validate",
+                    "context": {
+                        "itemSapCode": "000000000002134567"
+                    }
+                }
+            });
+        });
 
-        test('retorno de mudar preço normal com erro de validação',async ()=>{});
+        test('retorno de validacao de codigo sap para mudanca de preco normal com SUCESSO', async () => {
+            // isto deve definir a conversa para o dialogo correto
+            await postTextMessage('mudar preço normal um item para 20 reais de sap 2134567');
 
-        test('retorno de mudar preço normal SEM erro de validação',async ()=>{});
+            const postedAction = {
+                "action": "normal_price.validation",
+                "messages": [
+                    {
+                        "code": "100",
+                        "text": "sucesso!"
+                    }
+                ]
+            };
 
-        test('confirmação de mudar preço normal',async ()=>{});
+            const {replies} = await postActionMessage(postedAction);
+            expect(replies).toHaveLength(1);
+            expect(replies[0]).toMatchObject({
+                "type": "text",
+                "payload": "Tem certeza que deseja alterar o item 2134567 para o valor R$ R$ 20,00 ? "
+            });
+        });
+
+        test('retorno de validacao de codigo sap para mudanca de preco normal com ERRO', async () => {
+            // isto deve definir a conversa para o dialogo correto
+            await postTextMessage('mudar preço normal um item para 20 reais de sap 2134567');
+
+            const postedAction = {
+                "action": "normal_price.validation",
+                "messages": [
+                    {
+                        "code": "302",
+                        "text": "o item 321 com departamento 987 não foi importado porque o usuario não tem permissão neste departamento",//it's ignored
+                        "context": {
+                            "item": 321,
+                            "department": 987
+                        }
+                    }
+                ]
+            };
+
+            const {replies} = await postActionMessage(postedAction);
+            expect(replies).toHaveLength(1);
+            expect(replies[0]).toMatchObject({
+                "type": "text",
+                "payload": "O item 321, com departamento 987 não foi importado porque você não tem permissão neste departamento"
+            });
+        });
+
+        test('confirmação POSITIVA de mudar preço normal', async () => {
+
+        });
+
+        test('confirmação NEGATIVA de mudar preço normal', async () => {
+        });
 
     });
 

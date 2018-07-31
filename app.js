@@ -121,6 +121,8 @@ const chatMessagePost = async (req, res) => {
         context = scripts.resolveCurrency(messageText, context);
         context = scripts.resolveSapCode(messageText, context);
 
+        context = ContextManager.fromPlainObject(context);// make sure it's Context Instance
+
         // Use intents to get replies
         const {context: newContext, replies} = dialogEngine.resolve(context, aiResponse, messageText);
         if (replies.length === 0) console.log('No Replies.');

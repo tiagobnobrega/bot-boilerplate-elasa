@@ -57,7 +57,7 @@ class Context {
     return plainObject;
   }
 
-  fromPlainObject(options){
+  static fromPlainObject(options){
     return new Context(options);
   }
 }

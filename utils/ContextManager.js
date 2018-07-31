@@ -22,6 +22,11 @@ class ContextManager {
   clearAll() {
     this.contexts = {};
   }
+
+  static fromPlainObject(src){
+      if(src instanceof Context) return src;
+     return new Context(src);
+  }
 }
 
 module.exports = ContextManager;
