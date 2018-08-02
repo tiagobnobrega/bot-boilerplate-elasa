@@ -78,8 +78,8 @@ const resolveSapCode = (message, context) => {
 
 const actionRequestMessageMapper = {
     'UNKNOWN': m => ({type: 'error', text: `Um erro inesperado ocorreu ao processar o arquivo: ${m.code}`}),
-    '100': m => ({type: 'success', text: 'Processo realizado com sucesso.'}),
-    '101': m => ({type: 'success', text: 'Processo realizado parcialmente com sucesso.'}),
+    '100': m => ({type: 'success', text: 'Os itens foram enviados para processamento com sucesso'}),
+    '101': m => ({type: 'success', text: 'Os itens foram parcialmente enviados para processamento'}),
     '200': m => ({type: 'error', text: 'Ocorreu um erro no servidor'}),
     '201': m => ({
         type: 'error',
@@ -103,12 +103,14 @@ const actionRequestMessageMapper = {
         text: `O item ${m.context && formatCodSap(m.context.item)}, do departamento ${m.context && m.context.department}, não foi alterado porque você não tem acesso a esse departamento.`
     }),
     '303': m => ({
-        type: 'warning',
-        text: `O item ${m.context && formatCodSap(m.context.item)} de preço ${m.context && formatCurrency(m.context.price)} estava replicado e por esse motivo foi escolhido o menor preço R$ ${m.context && m.context.lowerPrice}.`
+        type: 'success',
+        // text: `O item ${m.context && formatCodSap(m.context.item)} de preço ${m.context && formatCurrency(m.context.price)} estava replicado e por esse motivo foi escolhido o menor preço R$ ${m.context && m.context.lowerPrice}.`
+        text: `Os itens foram enviados para processamento com sucesso.`
     }),
     '304': m => ({
-        type: 'warning',
-        text: `O item ${m.context && formatCodSap(m.context.item)} de preço ${m.context && formatCurrency(m.context.price)} é de uma variante já inserida no arquivo e por isso foi escolhido o menor preço R$ ${m.context && m.context.lowerPrice}.`
+        type: 'success',
+        // text: `O item ${m.context && formatCodSap(m.context.item)} de preço ${m.context && formatCurrency(m.context.price)} é de uma variante já inserida no arquivo e por isso foi escolhido o menor preço R$ ${m.context && m.context.lowerPrice}.`
+        text: `Os itens foram enviados para processamento com sucesso.`
     }),
     '305': m => ({
         type: 'warning',
@@ -150,8 +152,14 @@ const handleFileValidation = ({
         ...messageMapper
     };
 
-    const successMessage = userInputData.messages.filter(m => (parseInt(m.code)) < 200)[0];
-    const errorMessages = userInputData.messages.filter(m => (parseInt(m.code)) >= 200);
+    const successMessage = userInputData.messages.filter(m => {
+        const mappedMessage =  messageMapper[m.code.toString()](m);
+        return mappedMessage.type ==='success'
+    })[0];
+    const errorMessages = userInputData.messages.filter(m => {
+        const mappedMessage =  messageMapper[m.code.toString()](m);
+        return mappedMessage.type !=='success'
+    });
     const replies = [];
 
     if (successMessage) {

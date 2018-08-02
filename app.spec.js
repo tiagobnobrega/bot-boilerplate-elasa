@@ -3,12 +3,12 @@ require('dotenv').config();
 const chalk = require('chalk');
 
 // LOCAL
-const PORT = process.env.PORT || 80;
-const BASE_URL = 'http://localhost';
+// const PORT = process.env.PORT || 80;
+// const BASE_URL = 'http://localhost';
 
 //EXTERNO
-// const PORT = 80;
-// const BASE_URL = 'https://elasa-chatbot.mybluemix.net';
+const PORT = 80;
+const BASE_URL = 'https://elasa-chatbot.mybluemix.net';
 
 const axiosClient = axios.create({
     baseURL: `${BASE_URL}${PORT && PORT !== 80 ? ':' + PORT : ''}`,
@@ -150,7 +150,7 @@ describe('Testes integrados do bot', () => {
             })
         });
 
-        test('mensagem tipo "action/normal_price.more_info" no contexto raiz com SUCESSO', async () => {
+        test('mensagem tipo "action/normal_price.more_info" no contexto raiz com SUCESSO (100)', async () => {
             const postedFile = {
                 "action": "normal_price.more_info",
                 "messages": [
@@ -172,6 +172,53 @@ describe('Testes integrados do bot', () => {
                 }
             });
         });
+
+        test('mensagem tipo "action/normal_price.more_info" no contexto raiz com SUCESSO (304)', async () => {
+            const postedFile = {
+                "action": "normal_price.more_info",
+                "messages": [
+                    {
+                        "code": 304,
+                        "text": "sucesso!"
+                    }
+                ]
+            };
+
+            const {replies} = await postActionMessage(postedFile);
+            expect(replies).toHaveLength(1);
+
+            expect(replies[0]).toMatchObject({
+                "type": "action",
+                "payload": {
+                    "action": "normal_price.send_file",
+                    "content": expect.any(String)
+                }
+            });
+        });
+
+        test('mensagem tipo "action/normal_price.more_info" no contexto raiz com SUCESSO (303)', async () => {
+            const postedFile = {
+                "action": "normal_price.more_info",
+                "messages": [
+                    {
+                        "code": 303,
+                        "text": "sucesso!"
+                    }
+                ]
+            };
+
+            const {replies} = await postActionMessage(postedFile);
+            expect(replies).toHaveLength(1);
+
+            expect(replies[0]).toMatchObject({
+                "type": "action",
+                "payload": {
+                    "action": "normal_price.send_file",
+                    "content": expect.any(String)
+                }
+            });
+        });
+
 
         test('mensagem tipo "action/normal_price.more_info" no contexto raiz com SUCESSO PARCIAL', async () => {
             const postedFile = {
@@ -240,8 +287,6 @@ describe('Testes integrados do bot', () => {
                 "type": "text",
                 "payload": "Ok. Se precisar de mais alguma ajuda, estarei à disposição."
             });
-
-
         });
 
         test('mudar preço normal passando apenas o código SAP', async () => {
@@ -276,7 +321,7 @@ describe('Testes integrados do bot', () => {
             });
         });
 
-        test('retorno de validacao de codigo sap para mudanca de preco normal com SUCESSO', async () => {
+        test('retorno de validacao de codigo SAP para mudanca de preco normal com SUCESSO', async () => {
             // isto deve definir a conversa para o dialogo correto
             await postTextMessage('mudar preço normal um item para 20 reais de sap 2134567');
 
@@ -298,7 +343,7 @@ describe('Testes integrados do bot', () => {
             });
         });
 
-        test('retorno de validacao de codigo sap para mudanca de preco normal com ERRO', async () => {
+        test('retorno de validacao de codigo SAP para mudanca de preco normal com ERRO', async () => {
             // isto deve definir a conversa para o dialogo correto
             await postTextMessage('mudar preço normal um item para 20 reais de sap 2134567');
 
@@ -372,6 +417,28 @@ describe('Testes integrados do bot', () => {
 
         });
 
+
+    });
+
+    describe('Alteração de preço sem tipo definido', () => {
+        test('Alteração preço sem tipo', async ()=>{
+            const {replies} = await postTextMessage('alterar preço');
+            expect(replies).toHaveLength(1);
+            expect(replies[0]).toMatchObject({
+                "type": "text",
+                "payload": "Eu consigo alterar apenas preço normal. Você gostaria de prosseguir?"
+            });
+        });
+
+        test('Alteração preço sem tipo, seguide de confirmação', async ()=>{
+            await postTextMessage('enviar o preço de um item');
+            const {replies} = await postTextMessage('sim');
+            expect(replies).toHaveLength(1);
+            expect(replies[0]).toMatchObject({
+                "type": "text",
+                "payload": "Pode me informar, por favor, o valor do novo preço e o código SAP do item?"
+            });
+        });
 
     });
 
