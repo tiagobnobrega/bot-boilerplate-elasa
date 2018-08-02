@@ -2,8 +2,13 @@ const axios = require('axios');
 require('dotenv').config();
 const chalk = require('chalk');
 
+// LOCAL
 const PORT = process.env.PORT || 80;
 const BASE_URL = 'http://localhost';
+
+//EXTERNO
+// const PORT = 80;
+// const BASE_URL = 'https://elasa-chatbot.mybluemix.net';
 
 const axiosClient = axios.create({
     baseURL: `${BASE_URL}${PORT && PORT !== 80 ? ':' + PORT : ''}`,
@@ -11,10 +16,10 @@ const axiosClient = axios.create({
     // headers: {'X-Custom-Header': 'foobar'}
 });
 
-jest.setTimeout(7000);
+jest.setTimeout(15000);
 
 const buildNewSession = () => ({
-    contextId: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
+    conversationId: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
     user: "app.spec"
 });
 
@@ -53,6 +58,7 @@ console.info(chalk.black.bgBlue("Don't forget to start local server with 'yarn s
 console.info(chalk.black.bgYellow.bold("Estes são testes integrados, seu funcionamento depende do conteúdo das respostas cadastradas no fluxo de dialogos e treinamento de intenções e entidades."));
 console.info(chalk.black.bgYellow.bold("Alterações no fluxo devem ser refletidas nos testes para o sucesso de sua execução"));
 
+
 describe('Testes integrados do bot', () => {
 
     describe('Troca de mensagem simples', () => {
@@ -79,20 +85,16 @@ describe('Testes integrados do bot', () => {
             });
         });
 
-        test('mensagem tipo "action/normal_price.file_validation" no contexto raiz com erros', async () => {
+        test('mensagem tipo "action/normal_price.more_info" no contexto raiz com ERROS', async () => {
             const postedFile = {
-                "action": "normal_price.file_validation",
+                "action": "normal_price.more_info",
                 "messages": [
                     {
-                        "code": "100",
-                        "text": "sucesso!"
-                    },
-                    {
-                        "code": "200",
+                        "code": 200,
                         "text": "erro no servidor"
                     },
                     {
-                        "code": "201",
+                        "code": 201,
                         "text": "formato de arquivo inválido",
                         "context": {
                             "format": "pdf",
@@ -100,18 +102,18 @@ describe('Testes integrados do bot', () => {
                         }
                     },
                     {
-                        "code": "202",
+                        "code": 202,
                         "text": "não é possível enviar preço normal após as 19h30",
                         "context": {
                             "timelimit": "19:30:00"
                         }
                     },
                     {
-                        "code": "300",
+                        "code": 300,
                         "text": "não foi possível processar o arquivo"
                     },
                     {
-                        "code": "301",
+                        "code": 301,
                         "text": "o item 123, na linha 456 não foi encontrado na base",
                         "context": {
                             "item": 123,
@@ -119,7 +121,7 @@ describe('Testes integrados do bot', () => {
                         }
                     },
                     {
-                        "code": "302",
+                        "code": 302,
                         "text": "o item 321, na linha 654, com departamento 987 não foi importado porque o usuario não tem permissão neste departamento",
                         "context": {
                             "item": 321,
@@ -148,12 +150,12 @@ describe('Testes integrados do bot', () => {
             })
         });
 
-        test('mensagem tipo "action" no contexto raiz SEM erros', async () => {
+        test('mensagem tipo "action/normal_price.more_info" no contexto raiz com SUCESSO', async () => {
             const postedFile = {
-                "action": "normal_price.file_validation",
+                "action": "normal_price.more_info",
                 "messages": [
                     {
-                        "code": "100",
+                        "code": 100,
                         "text": "sucesso!"
                     }
                 ]
@@ -167,6 +169,45 @@ describe('Testes integrados do bot', () => {
                 "payload": {
                     "action": "normal_price.send_file",
                     "content": expect.any(String)
+                }
+            });
+        });
+
+        test('mensagem tipo "action/normal_price.more_info" no contexto raiz com SUCESSO PARCIAL', async () => {
+            const postedFile = {
+                "action": "normal_price.more_info",
+                "messages": [
+                    {
+                        "code": 101,
+                        "text": "sucesso!"
+                    },
+                    {
+                        "code": 302,
+                        "text": "o item 321, na linha 654, com departamento 987 não foi importado porque o usuario não tem permissão neste departamento",
+                        "context": {
+                            "item": 321,
+                            "line": 654,
+                            "department": 987
+                        }
+                    }
+                ]
+            };
+
+            const {replies} = await postActionMessage(postedFile);
+            expect(replies).toHaveLength(2);
+
+            expect(replies[0]).toMatchObject({
+                "type": "action",
+                "payload": {
+                    "action": "normal_price.send_file",
+                    "content": expect.any(String)
+                }
+            });
+            expect(replies[1]).toMatchObject({
+                "type": "modal",
+                payload: {
+                    "content": expect.any(String),
+                    "messages": expect.any(Array)
                 }
             });
         });
@@ -189,6 +230,31 @@ describe('Testes integrados do bot', () => {
                 "type": "text",
                 "payload": "Pode me informar, por favor, o valor do novo preço e o código SAP do item?"
             });
+        });
+
+        test('cancelamento de mudar preço normal', async () => {
+            //TODO Implementar
+            // isto deve definir a conversa para o dialogo correto
+            await postTextMessage('mudar preço normal um item para 20 reais de sap 2134567');
+            await postActionMessage({
+                "action": "normal_price.validation",
+                "messages": [
+                    {
+                        "code": 100,
+                        "text": "sucesso!"
+                    }
+                ]
+            });
+
+            expect("teste não implementado").toBe("teste implmentado");
+            const {replies,...rest} = await postTextMessage('não');
+            expect(replies).toHaveLength(1);
+            expect(replies[0]).toMatchObject({
+                "type": "text",
+                "payload": "Ok. Se precisar de mais alguma ajuda, estarei à disposição."
+            });
+
+
         });
 
         test('mudar preço normal passando apenas o código SAP', async () => {
@@ -231,7 +297,7 @@ describe('Testes integrados do bot', () => {
                 "action": "normal_price.validation",
                 "messages": [
                     {
-                        "code": "100",
+                        "code": 100,
                         "text": "sucesso!"
                     }
                 ]
@@ -253,7 +319,7 @@ describe('Testes integrados do bot', () => {
                 "action": "normal_price.validation",
                 "messages": [
                     {
-                        "code": "302",
+                        "code": 302,
                         "text": "o item 321 com departamento 987 não foi importado porque o usuario não tem permissão neste departamento",//it's ignored
                         "context": {
                             "item": 321,
@@ -272,11 +338,53 @@ describe('Testes integrados do bot', () => {
         });
 
         test('confirmação POSITIVA de mudar preço normal', async () => {
+            // isto deve definir a conversa para o dialogo correto
+            await postTextMessage('mudar preço normal um item para 20 reais de sap 2134567');
+            await postActionMessage({
+                "action": "normal_price.validation",
+                "messages": [
+                    {
+                        "code": 100,
+                        "text": "sucesso!"
+                    }
+                ]
+            });
 
+            const {replies,...rest} = await postTextMessage('sim');
+            expect(replies).toHaveLength(1);
+            expect(replies[0]).toMatchObject({
+                "type": "action",
+                "payload": {
+                    "action": "normal_price.send",
+                    "content": "suas alterações estão em processamento"
+                }
+            });
         });
 
         test('confirmação NEGATIVA de mudar preço normal', async () => {
+
+            // isto deve definir a conversa para o dialogo correto
+            await postTextMessage('mudar preço normal um item para 20 reais de sap 2134567');
+            await postActionMessage({
+                "action": "normal_price.validation",
+                "messages": [
+                    {
+                        "code": 100,
+                        "text": "sucesso!"
+                    }
+                ]
+            });
+
+            const {replies,...rest} = await postTextMessage('não');
+            expect(replies).toHaveLength(1);
+            expect(replies[0]).toMatchObject({
+                "type": "text",
+                "payload": "Ok. Se precisar de mais alguma ajuda, estarei à disposição."
+            });
+
+
         });
+
 
     });
 

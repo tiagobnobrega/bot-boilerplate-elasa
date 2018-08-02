@@ -26,7 +26,7 @@ numeral.register('locale', 'br', {
         billion: 'Bi',
         trillion: 'Tri'
     },
-    ordinal : (number)=>'°',
+    ordinal: (number) => '°',
     currency: {
         symbol: 'R$'
     }
@@ -43,8 +43,8 @@ const parseCurrency = (valor) => {
     return parseFloat(valor);
 };
 
-const formatCodSap = (valor)=>{
-  return parseInt(valor).toString();
+const formatCodSap = (valor) => {
+    return parseInt(valor).toString();
 };
 
 const formatCurrency = val => numeral(val).format('$ 0,0.00');
@@ -53,7 +53,7 @@ const resolveCurrency = (message, context) => {
     let valor = getCurrency(message);
     valor = valor && valor[0] && parseCurrency(valor[0]);
     if (valor) {
-        return {...context, currency: valor, currencyFmt:formatCurrency(valor)};
+        return {...context, currency: valor, currencyFmt: formatCurrency(valor)};
     }
     return context;
 };
@@ -72,59 +72,60 @@ const resolveSapCode = (message, context) => {
     }
     ;
 
-    return {...context, codSapCandidate: codSap, codSapCandidateFmt:formatCodSap(codSap)};
+    return {...context, codSapCandidate: codSap, codSapCandidateFmt: formatCodSap(codSap)};
 
 };
 
 const actionRequestMessageMapper = {
     'UNKNOWN': m => ({type: 'error', text: `Um erro inesperado ocorreu ao processar o arquivo: ${m.code}`}),
-    '100': m => ({type: 'success', text: 'Processo realizado com sucesso'}),
+    '100': m => ({type: 'success', text: 'Processo realizado com sucesso.'}),
+    '101': m => ({type: 'success', text: 'Processo realizado parcialmente com sucesso.'}),
     '200': m => ({type: 'error', text: 'Ocorreu um erro no servidor'}),
     '201': m => ({
         type: 'error',
-        text: `Formato de arquivo inválido. Esperado: "${m.context && m.context.expected}", recebido: ${m.context && m.context.format}`
+        text: `Formato de arquivo inválido. Esperado: "${m.context && m.context.expected}", recebido: ${m.context && m.context.format}.`
     }),
     '202': m => ({
         type: 'error',
-        text: 'Não foi possível processar o arquivo'
+        text: 'Não foi possível processar o arquivo.'
     }),
-    '203': m=>({
-        type:'warning',
-        text:'Nenhum dado para ser processado'
+    '203': m => ({
+        type: 'warning',
+        text: 'O arquivo enviado está vazio.'
     }),
-    '300': m => ({type: 'error', text: `Não foi possível processar o arquivo`}),
+    '300': m => ({type: 'error', text: `Não foi possível processar o arquivo.`}),
     '301': m => ({
         type: 'warning',
-        text: `O item ${m.context && m.context.item}, na linha ${m.context && m.context.line} não foi encontrado na base`
+        text: `O item ${m.context && formatCodSap(m.context.item)} não foi encontrado. Tente novamente.`
     }),
     '302': m => ({
         type: 'warning',
-        // text: `O item ${m.context && m.context.item}, na linha ${m.context && m.context.line}, com departamento ${m.context && m.context.department} não foi importado porque você não tem permissão neste departamento`
-        text: `O item ${m.context && m.context.item}, com departamento ${m.context && m.context.department} não foi importado porque você não tem permissão neste departamento`
+        text: `O item ${m.context && formatCodSap(m.context.item)}, do departamento ${m.context && m.context.department}, não foi alterado porque você não tem acesso a esse departamento.`
     }),
-    '303': m=>({
+    '303': m => ({
         type: 'warning',
-        text: `O item ${m.context && m.context.item} de preço R$ ${m.context && m.context.price} estava replicado e por esse motivo foi escolhido o menor preço R$ ${m.context && m.context.lowerPrice}`
+        text: `O item ${m.context && formatCodSap(m.context.item)} de preço ${m.context && formatCurrency(m.context.price)} estava replicado e por esse motivo foi escolhido o menor preço R$ ${m.context && m.context.lowerPrice}.`
     }),
-    '304': m=>({
+    '304': m => ({
         type: 'warning',
-        text: `O item ${m.context && m.context.item} de preço R$ ${m.context && m.context.price} é de uma variante já inserida no arquivo e por isso foi escolhido o menor preço R$ ${m.context && m.context.lowerPrice}`
+        text: `O item ${m.context && formatCodSap(m.context.item)} de preço ${m.context && formatCurrency(m.context.price)} é de uma variante já inserida no arquivo e por isso foi escolhido o menor preço R$ ${m.context && m.context.lowerPrice}.`
     }),
-    '305': m=>({
+    '305': m => ({
         type: 'warning',
-        text: `O item ${m.context && m.context.item} não possui preço ou o valor está zerado`
+        text: `O item ${m.context && formatCodSap(m.context.item)} está sem preço ou com o valor zerado.`
     }),
-    '400': m=>({
+    '400': m => ({
         type: 'warning',
         text: `Envio normal não encontrado`
     }),
-    '401': m=>({
+    '401': m => ({
         type: 'error',
-        text: `Não é possível enviar preço normal após: ${m.context && m.context.timelimit}`
+        // text: `Não é possível enviar preço normal após: ${m.context && m.context.timelimit}`
+        text: `Não foi possível enviar o preço normal. O limite de horário foi ultrapassado.`
     }),
-    '402': m=>({
+    '402': m => ({
         type: 'error',
-        text: 'Configuração de limite e hora não encontrada'
+        text: 'O arquivo não pode ser processado, pois a configuração de limite e hora não foi encontrada.'
     }),
 
 };
@@ -133,12 +134,11 @@ const actionRequestMessageMapper = {
 const handleFileValidation = ({
                                   userInputData = {},
                                   messageMapper,
-                                  successMessage = "Sua solicitação está sendo processada.",
                                   errorMessage = "Ocorreram erros no processamento do arquivo.",
                                   invalidActionMesssage = "Infelizmente não sou capaz de processar este tipo de ação."
                               }) => {
 
-    if (userInputData.action !== 'normal_price.file_validation') {
+    if (userInputData.action !== 'normal_price.more_info') {
         return {
             context: {},
             reply: {type: "text", content: invalidActionMesssage + ". action=" + userInputData.action}
@@ -150,34 +150,34 @@ const handleFileValidation = ({
         ...messageMapper
     };
 
-    const hasErrors = !!userInputData.messages.filter(m => m.code !== '100').length;
-    const messages = userInputData.messages.map(m => {
-        const mapper = messageMapper[m.code] || messageMapper['UNKNOWN'];
-        return mapper(m);
-    });
+    const successMessage = userInputData.messages.filter(m => (parseInt(m.code)) < 200)[0];
+    const errorMessages = userInputData.messages.filter(m => (parseInt(m.code)) >= 200);
+    const replies = [];
 
-    if (hasErrors) {
-        return {
-            reply: {
-                "type": "modal",
-                "payload": {
-                    "content": errorMessage,
-                    messages
-                }
+    if (successMessage) {
+        replies.push({
+            "type": "action",
+            "payload": {
+                "action": "normal_price.send_file",
+                "content": messageMapper[successMessage.code.toString()](successMessage).text
             }
-        }
-            ;
-    } else {
-        return {
-            reply: {
-                "type": "action",
-                "payload": {
-                    "action": "normal_price.send_file",
-                    "content": successMessage,
-                }
-            }
-        }
+        });
     }
+
+    if (errorMessages.length > 0) {
+        const messages = errorMessages.map(m => {
+            const mapper = messageMapper[m.code.toString()] || messageMapper['UNKNOWN'];
+            return mapper(m);
+        });
+        replies.push({
+            "type": "modal",
+            "payload": {
+                "content": errorMessage,
+                messages
+            }
+        });
+    }
+    return {replies};
 };
 
 
@@ -195,12 +195,12 @@ const handlePriceValidationMessage = ({userInputData = {}, messageMapper = {}, i
 
     const replyText = userInputData.messages
         .reduce((a, b) => {
-            const mapper = messageMapper[b.code] || messageMapper['UNKNOWN'];
+            const mapper = messageMapper[b.code.toString()] || messageMapper['UNKNOWN'];
             const {text} = mapper(b);
             return (a ? a + "\n" + text : text);
         }, null);
 
-    return {reply:{type:"text",content:replyText}};
+    return {reply: {type: "text", content: replyText}};
 
 };
 

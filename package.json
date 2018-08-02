@@ -8,8 +8,8 @@
   },
   "main": "app.js",
   "scripts": {
-    "test": "jest",
-    "start": "node app.js"
+    "start": "node app.js",
+    "test": "jest"
   },
   "keywords": [
     "bot",

@@ -8,7 +8,7 @@ const bodyParser = require('body-parser');
 //enable CORS
 const corsMiddleware = require('restify-cors-middleware');
 
-const CORS_ORIGIN=process.env.CORS_ORIGIN && process.env.CORS_ORIGIN.split(";");
+const CORS_ORIGIN = process.env.CORS_ORIGIN && process.env.CORS_ORIGIN.split(";");
 const cors = corsMiddleware({
     // preflightMaxAge: 5, //Optional
     origins: CORS_ORIGIN || ['*'],
@@ -99,21 +99,22 @@ const getMessageData = reqBody => {
 const chatMessagePost = async (req, res) => {
     try {
         // Retrive/create context
-        const {contextId: requestContextId, userId, message, type} = req.body;
+        const {conversationId: requestConversationId, userId, message, type} = req.body;
         if (handleReset(message)) return;
 
-        const contextId = requestContextId || UUIDv4();
-        let context = contextManager.getContext(contextId, {userId});
+        const conversationId = requestConversationId || UUIDv4();
+        let context = contextManager.getContext(conversationId, {userId});
         context.userId = userId;
 
         const {text: messageText, data: messageData} = getMessageData(req.body);
 
 
-        let aiResponse = {intents:[], entities:[]}; //TODO validar se não precisa ter atributo intents e entities vazios
+        let aiResponse = {intents: [], entities: []}; //TODO validar se não precisa ter atributo intents e entities vazios
         if (messageText) {
             // Call laisClient. talk to get user message intents & entities
-            aiResponse = await laisClient.talk(contextId, messageText);
-        };
+            aiResponse = await laisClient.talk(conversationId, messageText);
+        }
+        ;
 
         context.userInputType = type;
         context.userInputData = messageData;
@@ -127,15 +128,15 @@ const chatMessagePost = async (req, res) => {
         const {context: newContext, replies} = dialogEngine.resolve(context, aiResponse, messageText);
         if (replies.length === 0) console.log('No Replies.');
 
-        contextManager.setContext(contextId, newContext);
+        contextManager.setContext(conversationId, newContext);
 
         // Do some transformation.
         const prevContextObj = context.asPlainObject();
         const nextContextObj = newContext.asPlainObject();
 
-        const returnReplies = await getReturnReplies(replies, prevContextObj, nextContextObj, scripts, contextId, context);
+        const returnReplies = await getReturnReplies(replies, prevContextObj, nextContextObj, scripts, conversationId, context);
 
-        res.send({contextId, replies: normalizeReplies(returnReplies)});
+        res.send({conversationId, replies: normalizeReplies(returnReplies)});
     } catch (err) {
         console.error(err);
         res.send({type: 'error', message: err.message, stack: err.stack});
@@ -146,44 +147,47 @@ const chatMessagePost = async (req, res) => {
  * Normalize text replies to conform with client format
  * @param replies
  */
-const normalizeReplies = (replies)=>{
-    return replies.map(r=>{
-        if(r && r.type==='text'){
+const normalizeReplies = (replies) => {
+    return replies.map(r => {
+        if (r && r.type === 'text') {
             const {content, ...rest} = {
                 ...r,
-                payload:r.content,
+                payload: r.content,
             };
             return rest;
-        }else{
+        } else {
             return r;
         }
-    }).filter(r=>r);//filtrar regras falsy
+    }).filter(r => r);//filtrar regras falsy
 };
 
-const getReturnReplies = async (replies, prevContextObj, nextContextObj,scripts, contextId, context) => {
-    return Promise.all(replies.map(async reply => {
-        if (reply.type === "function") {
+const getReturnReplies = async (replies, prevContextObj, nextContextObj, scripts, conversationId, context) => {
+    const repliesArr = await Promise.all(replies.map(async reply => {
+        let fnReplies = [];
+        if (reply && reply.type === "function") {
             const fnValue = await reply.content(prevContextObj, nextContextObj, scripts);
-            reply = fnValue.reply || (_.isString(fnValue) && fnValue) ;
+            fnReplies = (fnValue.reply && [fnValue.reply]) || fnValue.replies;
             //set context if any returns
-            if (fnValue.context) contextManager.setContext(contextId, context.fromPlainObject(fnValue.context));
-            console.log('Reply. Definir Contexto:', contextManager.getContext(contextId).asPlainObject());
+            if (fnValue.context) contextManager.setContext(conversationId, context.fromPlainObject(fnValue.context));
+            // console.log('Reply. Definir Contexto:', contextManager.getContext(conversationId).asPlainObject());
         }
-
-        if (reply && reply.type === "text") {
-            // console.log('transform reply with context:',reply, prevContextObj)
-            return {
-                ...reply,
-                content: laisDictionary.resolveWithContext(reply.content, {
-                    prevCtx: prevContextObj,
-                    nextCtx: nextContextObj
-                })
-            };
+        else if (reply) {
+            fnReplies = [reply]
         }
-        if(reply){
-            return  {...reply};
-        }
+        return fnReplies.map(r => {
+            if (r.type === 'text') {
+                return {
+                    ...r,
+                    content: laisDictionary.resolveWithContext(r.content, {
+                        prevCtx: prevContextObj,
+                        nextCtx: nextContextObj
+                    })
+                };
+            }
+            return r;
+        })
     }));
+    return _.flatten(repliesArr);
 };
 
 const handleReset = (message) => {
@@ -196,24 +200,24 @@ const handleReset = (message) => {
 
 
 const setupServer = async server => {
-    try{
-    console.log(startChalk('Configuring CORS...'));
-    server.pre(cors.preflight);
-    server.use(cors.actual);
+    try {
+        console.log(startChalk('Configuring CORS...'));
+        server.pre(cors.preflight);
+        server.use(cors.actual);
 
-    console.log(startChalk('Loading awesome LAIS Dialog...'));
-    // Load Dialogs & Rules & startUpdater
-    dialogEngine = await lais.DialogRemote({updateInterval: 5, logLevel: 'TRACE'});
+        console.log(startChalk('Loading awesome LAIS Dialog...'));
+        // Load Dialogs & Rules & startUpdater
+        dialogEngine = await lais.DialogRemote({updateInterval: 5, logLevel: 'TRACE'});
 
-    console.log(startChalk('Configuring chat message post handler... '));
-    server.post('/api/raw', [bodyParser.json(), wrapAsync(chatMessagePost)]);
-    server.get('/healthcheck', function (req, res) {
-        res.send({status: "Ok"});
-    });
+        console.log(startChalk('Configuring chat message post handler... '));
+        server.post('/api/raw', [bodyParser.json(), wrapAsync(chatMessagePost)]);
+        server.get('/healthcheck', function (req, res) {
+            res.send({status: "Ok"});
+        });
 
-    console.log(startChalk('Server configured. Ready to use!'))
-    }catch (e) {
-        console.error("Error on server setup",e);
+        console.log(startChalk('Server configured. Ready to use!'))
+    } catch (e) {
+        console.error("Error on server setup", e);
     }
 };
 setupServer(server);
