@@ -233,21 +233,8 @@ describe('Testes integrados do bot', () => {
         });
 
         test('cancelamento de mudar preço normal', async () => {
-            //TODO Implementar
-            // isto deve definir a conversa para o dialogo correto
-            await postTextMessage('mudar preço normal um item para 20 reais de sap 2134567');
-            await postActionMessage({
-                "action": "normal_price.validation",
-                "messages": [
-                    {
-                        "code": 100,
-                        "text": "sucesso!"
-                    }
-                ]
-            });
-
-            expect("teste não implementado").toBe("teste implmentado");
-            const {replies,...rest} = await postTextMessage('não');
+            await postTextMessage('mudar preço normal de um item');
+            const {replies} = await postTextMessage('mudei de ideia');
             expect(replies).toHaveLength(1);
             expect(replies[0]).toMatchObject({
                 "type": "text",
@@ -271,7 +258,7 @@ describe('Testes integrados do bot', () => {
             expect(replies).toHaveLength(1);
             expect(replies[0]).toMatchObject({
                 "type": "text",
-                "payload": "Preciso saber o código SAP do item também"
+                "payload": "Preciso saber o código SAP do item também, por favor."
             });
         });
 
@@ -307,7 +294,7 @@ describe('Testes integrados do bot', () => {
             expect(replies).toHaveLength(1);
             expect(replies[0]).toMatchObject({
                 "type": "text",
-                "payload": "Tem certeza que deseja alterar o item 2134567 para o valor R$ R$ 20,00 ? "
+                "payload": "Ok. Deseja alterar o valor do item 2134567 para R$ R$ 20,00?"
             });
         });
 
@@ -333,7 +320,7 @@ describe('Testes integrados do bot', () => {
             expect(replies).toHaveLength(1);
             expect(replies[0]).toMatchObject({
                 "type": "text",
-                "payload": "O item 321, com departamento 987 não foi importado porque você não tem permissão neste departamento"
+                "payload": "O item 321, do departamento 987, não foi alterado porque você não tem acesso a esse departamento."
             });
         });
 
