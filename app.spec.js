@@ -3,12 +3,12 @@ require('dotenv').config();
 const chalk = require('chalk');
 
 // LOCAL
-// const PORT = process.env.PORT || 80;
-// const BASE_URL = 'http://localhost';
+const PORT = process.env.PORT || 80;
+const BASE_URL = 'http://localhost';
 
 //EXTERNO
-const PORT = 80;
-const BASE_URL = 'https://elasa-chatbot.mybluemix.net';
+// const PORT = 80;
+// const BASE_URL = 'https://elasa-chatbot.mybluemix.net';
 
 const axiosClient = axios.create({
     baseURL: `${BASE_URL}${PORT && PORT !== 80 ? ':' + PORT : ''}`,
@@ -70,7 +70,43 @@ describe('Testes integrados do bot', () => {
                 "payload": expect.any(String)
             });
         });
+
+
     });
+    describe('Início de dialogo', () =>{
+        test('mensagem "##start_conversation@@" deve retornar mensagem de inicio de dialogo início de dialogo', async () => {
+            const {replies} = await postTextMessage('##start_conversation@@');
+            expect(replies).toHaveLength(1);
+            expect(replies[0]).toMatchObject({
+                "type": "text",
+                "payload": "Oi, eu sou a Laís, a Inteligência Artificial do DCM Digital. Por enquanto estou aqui para te ajudar a realizar a alteração de preço normal item a item ou em massa. Caso queira realizar um do dois tipos, é só me dizer."
+            });
+        });
+
+        test('mensagem "vamos lá" no contexto raiz deve perguntar sobre tipo de alteração de preço', async () => {
+            const {replies} = await postTextMessage('vamos lá');
+            expect(replies).toHaveLength(1);
+            expect(replies[0]).toMatchObject({
+                "type": "text",
+                "payload": "Eu consigo somente alterar preço normal. Caso queira continuar, me diga se será em massa ou item a item."
+            });
+        });
+
+        test('mensagem "vamos lá" seguido de  "em massa" deve retornar action normal_price.more_info', async () => {
+            await postTextMessage('vamos lá');
+            const {replies} = await postTextMessage('em massa');
+            expect(replies).toHaveLength(1);
+            expect(replies[0]).toMatchObject({
+                "type": "action",
+                "payload": {
+                    "action": "normal_price.more_info",
+                    "content": "Faça o upload do arquivo modelo de importação preenchido."
+                }
+            });
+        });
+
+    });
+
 
     describe('Alteração de preço em massa', () => {
         test('mudar preço normal em massa', async () => {
@@ -261,12 +297,13 @@ describe('Testes integrados do bot', () => {
     });
 
     describe('Alteração de preço normal', () => {
+
         test('mudar preço sem definir tipo', async () => {
             const {replies} = await postTextMessage('mudar preço de um item');
             expect(replies).toHaveLength(1);
             expect(replies[0]).toMatchObject({
                 "type": "text",
-                "payload": "Eu consigo alterar apenas preço normal. Você gostaria de prosseguir?"
+                "payload": "Eu consigo alterar apenas preço normal. Caso queira continuar, me diga se será em massa ou item a item."
             });
         });
 
