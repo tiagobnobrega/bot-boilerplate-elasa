@@ -45,21 +45,6 @@
     "botId": "elasa-preco"
   },
   {
-    "_id": "5af99a6220e5ae00376bedaf",
-    "id": "MUDAR_PRECO",
-    "minConfidence": 0.6,
-    "listenTo": [
-      "intents",
-      "entities"
-    ],
-    "meta": {
-      "x": 1424.7023430683998,
-      "y": 477.92993724288294,
-      "color": "rgba(80,227,194,1)"
-    },
-    "botId": "elasa-preco"
-  },
-  {
     "_id": "5b5f25310509ba0046bc26f7",
     "id": "VALIDAR_MUDAR_PRECO_NORMAL",
     "minConfidence": 0.6,
