@@ -35,7 +35,7 @@ numeral.locale('br');
 
 
 const getCurrency = (userInput = '') => {
-    return userInput.match(/\b((((\d{1,2}\.\d{3})|(\d{1,5}))(\,\d+)?)){1}\b/);
+    return userInput.match && userInput.match(/\b((((\d{1,2}\.\d{3})|(\d{1,5}))(\,\d+)?)){1}\b/);
 };
 
 const parseCurrency = (valor) => {

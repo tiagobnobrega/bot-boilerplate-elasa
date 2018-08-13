@@ -18,12 +18,11 @@ const LaisDialogRemote = async ({updateInterval, ...rest}={} )=> {
   }
   me.updateDialogs = async ()=>{
     console.log('Updating Dialogs And Rules...');
-    const {dialogs, rules} = getUpdatedDialogs();
-    console.log('dialogs',dialogs);
-    console.log('rules',rules);
+    const {dialogs, rules} = await getUpdatedDialogs();
+    // console.log('dialogs',dialogs);
+    // console.log('rules',rules);
     if(dialogs) dialogEngine.setDialogs(dialogs);
     if(rules) dialogEngine.setRules(rules);
-
   };
 
   const {dialogs, rules} = await getUpdatedDialogs();
@@ -34,7 +33,7 @@ const LaisDialogRemote = async ({updateInterval, ...rest}={} )=> {
     console.log(`Starting auto-update interval of ${actualInterval}s for dialogs & rules`);
     me.updateInterval = setInterval(me.updateDialogs, actualInterval*1000);
   }
-
+    dialogEngine.updateDialogs = me.updateDialogs.bind(me);
   return dialogEngine;
 };
 module.exports = LaisDialogRemote;

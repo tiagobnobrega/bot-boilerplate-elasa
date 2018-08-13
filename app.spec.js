@@ -79,7 +79,7 @@ describe('Testes integrados do bot', () => {
             expect(replies).toHaveLength(1);
             expect(replies[0]).toMatchObject({
                 "type": "text",
-                "payload": "Oi, eu sou a Laís, a Inteligência Artificial do DCM Digital. Por enquanto estou aqui para te ajudar a realizar a alteração de preço normal item a item ou em massa. Caso queira realizar um do dois tipos, é só me dizer."
+                "payload": "Oi, eu sou a Laís, a Inteligência Artificial do DCM Digital. Por enquanto estou aqui para te ajudar a realizar a alteração de preço normal item a item ou em massa. Caso queira realizar um dos dois tipos, é só me dizer."
             });
         });
 
@@ -255,7 +255,6 @@ describe('Testes integrados do bot', () => {
             });
         });
 
-
         test('mensagem tipo "action/normal_price.more_info" no contexto raiz com SUCESSO PARCIAL', async () => {
             const postedFile = {
                 "action": "normal_price.more_info",
@@ -408,7 +407,7 @@ describe('Testes integrados do bot', () => {
 
         test('confirmação POSITIVA de mudar preço normal', async () => {
             // isto deve definir a conversa para o dialogo correto
-            await postTextMessage('mudar preço normal um item para 20 reais de sap 2134567');
+            await postTextMessage('mudar preço normal um item para 20,99 reais de sap 2131514');
             await postActionMessage({
                 "action": "normal_price.validation",
                 "messages": [
@@ -425,13 +424,16 @@ describe('Testes integrados do bot', () => {
                 "type": "action",
                 "payload": {
                     "action": "normal_price.send",
-                    "content": "suas alterações estão em processamento"
+                    "content": "suas alterações estão em processamento",
+                    "context":{
+                        "codSap":'000000000002131514',
+                        "valor": 20.99
+                    }
                 }
             });
         });
 
         test('confirmação NEGATIVA de mudar preço normal', async () => {
-
             // isto deve definir a conversa para o dialogo correto
             await postTextMessage('mudar preço normal um item para 20 reais de sap 2134567');
             await postActionMessage({
@@ -450,11 +452,7 @@ describe('Testes integrados do bot', () => {
                 "type": "text",
                 "payload": "Ok. Se precisar de mais alguma ajuda, estarei à disposição."
             });
-
-
         });
-
-
     });
 
     describe('Alteração de preço sem tipo definido', () => {
@@ -463,20 +461,9 @@ describe('Testes integrados do bot', () => {
             expect(replies).toHaveLength(1);
             expect(replies[0]).toMatchObject({
                 "type": "text",
-                "payload": "Eu consigo alterar apenas preço normal. Você gostaria de prosseguir?"
+                "payload": "Eu consigo alterar apenas preço normal. Caso queira continuar, me diga se será em massa ou item a item."
             });
         });
-
-        test('Alteração preço sem tipo, seguide de confirmação', async ()=>{
-            await postTextMessage('enviar o preço de um item');
-            const {replies} = await postTextMessage('sim');
-            expect(replies).toHaveLength(1);
-            expect(replies[0]).toMatchObject({
-                "type": "text",
-                "payload": "Pode me informar, por favor, o valor do novo preço e o código SAP do item?"
-            });
-        });
-
     });
 
 });

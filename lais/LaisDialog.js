@@ -204,11 +204,12 @@ let LaisDialog = function(initArgs) {
           //logger.trace("applyActions(2)::context=" + printObj(context));
           let ret = resolveWithContext(context);//recursion
           context = ret.context;
-
+            logger.trace('recursion replies=',ret);
           if (ret.replies) {
             replies = replies.concat(ret.replies);
           }
         }
+          logger.trace(chalk.green("applyActions::final replies %s",printObj(replies)));
       } catch (error) {
         logger.error("applyActions ERROR", error);
       }
@@ -219,9 +220,14 @@ let LaisDialog = function(initArgs) {
   };
 
   let getMatchingActions = function(rule, context) {
-    return rule.actions.filter(function(action) {
-      return !action.match || action.match(context);
+      const actionsIndexes=[];
+     const filteredActions = rule.actions.filter(function(action,ind) {
+       const test = !action.match || action.match(context);
+       if(test) actionsIndexes.push(ind);
+        return test;
     });
+      logger.trace('getMatchingActions. matched action indexes=',actionsIndexes);
+      return filteredActions;
   };
 
   let getProtectedAttributes = function(context){

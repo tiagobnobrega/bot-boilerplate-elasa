@@ -96,6 +96,17 @@ const getMessageData = reqBody => {
     return {text, data};
 };
 
+const updateDialogGet = async (req, res) => {
+    try{
+        await dialogEngine.updateDialogs();
+        res.send({status:200,message:'Dialog updated and ready to use! :)'})
+    }catch (e) {
+        console.error(e);
+        res.send({type: 'error', message: err.message, stack: err.stack});
+    }
+
+};
+
 const chatMessagePost = async (req, res) => {
     try {
         // Retrive/create context
@@ -211,6 +222,7 @@ const setupServer = async server => {
 
         console.log(startChalk('Configuring chat message post handler... '));
         server.post('/api/raw', [bodyParser.json(), wrapAsync(chatMessagePost)]);
+        server.get('/api/reloadDialog', [bodyParser.json(), wrapAsync(updateDialogGet)]);
         server.get('/healthcheck', function (req, res) {
             res.send({status: "Ok"});
         });
