@@ -5,12 +5,6 @@
       "intent": "promocao",
       "examples": [
         {
-          "text": "promocao"
-        },
-        {
-          "text": "promocionar"
-        },
-        {
           "text": "promoção"
         },
         {
@@ -18,6 +12,12 @@
         },
         {
           "text": "preço promocional"
+        },
+        {
+          "text": "promocao"
+        },
+        {
+          "text": "promocionar"
         }
       ],
       "description": "usuário se referir unica e exclusivamente à promoção ou algo do tipo"
@@ -26,25 +26,25 @@
       "intent": "duvida_usuario",
       "examples": [
         {
-          "text": "talvez"
+          "text": "tanto faz"
         },
         {
           "text": "sei lá"
         },
         {
-          "text": "não sei"
+          "text": "talvez"
         },
         {
-          "text": "tanto faz"
-        },
-        {
-          "text": "ainda não sei"
+          "text": "vai saber"
         },
         {
           "text": "nem sei"
         },
         {
-          "text": "vai saber"
+          "text": "ainda não sei"
+        },
+        {
+          "text": "não sei"
         }
       ],
       "description": "Intenção do usuário de incerteza ( não sei ; sei lá ; tanto faz...)"
@@ -56,22 +56,22 @@
           "text": "catalogar item"
         },
         {
-          "text": "criar modulação"
-        },
-        {
           "text": "modular item"
         },
         {
-          "text": "preciso modular itens"
-        },
-        {
-          "text": "quero modular o item"
+          "text": "erro de catalogação item"
         },
         {
           "text": "quero modular um item"
         },
         {
-          "text": "erro de catalogação item"
+          "text": "quero modular o item"
+        },
+        {
+          "text": "preciso modular itens"
+        },
+        {
+          "text": "criar modulação"
         }
       ],
       "description": "Intenções voltadas às modulações de item"
@@ -89,7 +89,7 @@
       "intent": "agradecimento",
       "examples": [
         {
-          "text": "muito obrigado"
+          "text": "valeu"
         },
         {
           "text": "tchau"
@@ -101,7 +101,7 @@
           "text": "muito obrigada"
         },
         {
-          "text": "vlw"
+          "text": "muito obrigado"
         },
         {
           "text": "obrigada"
@@ -116,7 +116,7 @@
           "text": "tmj"
         },
         {
-          "text": "valeu"
+          "text": "vlw"
         },
         {
           "text": "ok"
@@ -158,10 +158,10 @@
       "intent": "leve_ganhe",
       "examples": [
         {
-          "text": "campanha leve ganhe"
+          "text": "desconto leve e ganhe"
         },
         {
-          "text": "desconto leve e ganhe"
+          "text": "campanha leve ganhe"
         },
         {
           "text": "leve e ganhe"
@@ -176,10 +176,10 @@
           "text": "mudar grade"
         },
         {
-          "text": "calcular grade"
+          "text": "grade"
         },
         {
-          "text": "grade"
+          "text": "calcular grade"
         }
       ],
       "description": "intenções voltadas à grade."
@@ -188,13 +188,13 @@
       "intent": "ping",
       "examples": [
         {
-          "text": "/ping"
+          "text": "!ping"
         },
         {
           "text": "ping"
         },
         {
-          "text": "!ping"
+          "text": "/ping"
         }
       ],
       "description": "ping"
@@ -203,7 +203,7 @@
       "intent": "me_sinto_bem",
       "examples": [
         {
-          "text": "estou incrível"
+          "text": "tudo bem"
         },
         {
           "text": "estou bem"
@@ -260,10 +260,10 @@
           "text": "incrível"
         },
         {
-          "text": "tudo"
+          "text": "estou incrível"
         },
         {
-          "text": "tudo bem"
+          "text": "tudo"
         },
         {
           "text": "estou ótima"
@@ -281,7 +281,7 @@
       "intent": "negativo",
       "examples": [
         {
-          "text": "no"
+          "text": "chega"
         },
         {
           "text": "não quero mais fazer isso"
@@ -299,7 +299,10 @@
           "text": "finalizar"
         },
         {
-          "text": "esquece"
+          "text": "outra hora"
+        },
+        {
+          "text": "deixa para la"
         },
         {
           "text": "desisto"
@@ -308,7 +311,7 @@
           "text": "desistir"
         },
         {
-          "text": "chega"
+          "text": "quero fazer outra coisa"
         },
         {
           "text": "cancelar o envio"
@@ -320,6 +323,9 @@
           "text": "cancela"
         },
         {
+          "text": "esquece"
+        },
+        {
           "text": "cancel"
         },
         {
@@ -329,58 +335,52 @@
           "text": "abortar"
         },
         {
-          "text": "outra hora"
-        },
-        {
-          "text": "deixa para la"
-        },
-        {
-          "text": "mudei de ideia"
-        },
-        {
-          "text": "não quero isso"
-        },
-        {
-          "text": "não é o que eu quero"
-        },
-        {
-          "text": "não é isso"
-        },
-        {
-          "text": "agora não"
+          "text": "não quero"
         },
         {
           "text": "nenhum"
         },
         {
-          "text": "stop"
+          "text": "agora não"
         },
         {
-          "text": "parar"
+          "text": "não é isso"
         },
         {
-          "text": "cancelar"
+          "text": "não é o que eu quero"
         },
         {
-          "text": "nada"
+          "text": "não quero isso"
         },
         {
-          "text": "quero fazer outra coisa"
+          "text": "mudei de ideia"
         },
         {
-          "text": "n"
-        },
-        {
-          "text": "não"
+          "text": "rollback"
         },
         {
           "text": "nope"
         },
         {
-          "text": "não quero"
+          "text": "não"
         },
         {
-          "text": "rollback"
+          "text": "n"
+        },
+        {
+          "text": "no"
+        },
+        {
+          "text": "nada"
+        },
+        {
+          "text": "cancelar"
+        },
+        {
+          "text": "parar"
+        },
+        {
+          "text": "stop"
         }
       ],
       "description": "negar alguma resposta"
@@ -388,6 +388,9 @@
     {
       "intent": "elogio_lais",
       "examples": [
+        {
+          "text": "Linda"
+        },
         {
           "text": "maravilhosa"
         },
@@ -405,60 +408,9 @@
         },
         {
           "text": "sabida"
-        },
-        {
-          "text": "Linda"
         }
       ],
       "description": "Aqui estão intenções voltadas a elogios à Lais."
-    },
-    {
-      "intent": "mudar_preco_massa",
-      "examples": [
-        {
-          "text": "alterar o preço de vários itens"
-        },
-        {
-          "text": "alterar o preço em massa"
-        },
-        {
-          "text": "virar vários itens"
-        },
-        {
-          "text": "gostaria de alterar o preço de mais de um item"
-        },
-        {
-          "text": "você consegue alterar o preço de muitos itens de uma vez?"
-        },
-        {
-          "text": "alterar o preço de itens"
-        },
-        {
-          "text": "alterar vários itens"
-        },
-        {
-          "text": "subir planilha de alteração de preço"
-        },
-        {
-          "text": "fazer alteração no preço de alguns itens"
-        },
-        {
-          "text": "alterar o preço normal de diversos itens"
-        },
-        {
-          "text": "alterar vários"
-        },
-        {
-          "text": "alterar alguns itens"
-        },
-        {
-          "text": "virar alguns itens"
-        },
-        {
-          "text": "alterar em massa"
-        }
-      ],
-      "description": "Alteração de preço em massa."
     },
     {
       "intent": "mudar_preco",

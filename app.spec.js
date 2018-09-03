@@ -73,23 +73,31 @@ describe('Testes integrados do bot', () => {
 
 
     });
-    describe('Início de dialogo', () =>{
+
+    describe('Início de dialogo', () => {
         test('mensagem "##start_conversation@@" deve retornar mensagem de inicio de dialogo início de dialogo', async () => {
             const {replies} = await postTextMessage('##start_conversation@@');
-            expect(replies).toHaveLength(1);
+            expect(replies).toHaveLength(2);
             expect(replies[0]).toMatchObject({
                 "type": "text",
-                "payload": "Oi, eu sou a Laís, a Inteligência Artificial do DCM Digital. Por enquanto estou aqui para te ajudar a realizar a alteração de preço normal item a item ou em massa. Caso queira realizar um dos dois tipos, é só me dizer."
+                "payload": "Oi, eu sou a Laís, a Inteligência Artificial do Elasa. Ainda estou aprendendo a realizar as tarefas da área Comercial. Por enquanto, já sei realizar alterações de preço normal. Quer testar? É só me dizer o item e o preço ou baixar este arquivo aqui e me enviar de volta, tá bom?"
+            });
+            expect(replies[1]).toMatchObject({
+                "type": "action",
+                "payload": {
+                    "action": "normal_price.more_info",
+                }
             });
         });
 
-        test('mensagem "vamos lá" no contexto raiz deve perguntar sobre tipo de alteração de preço', async () => {
+        test('mensagem "vamos lá" no contexto raiz deve informar uma alteração de preço', async () => {
             const {replies} = await postTextMessage('vamos lá');
-            expect(replies).toHaveLength(1);
+            expect(replies).toHaveLength(2);
             expect(replies[0]).toMatchObject({
-                "type": "text",
-                "payload": "Eu consigo somente alterar preço normal. Caso queira continuar, me diga se será em massa ou item a item."
+                "payload": "Posso realizar a alteração de preço normal. É só me dizer o item e o preço ou baixar este arquivo aqui e me enviar de volta",
+                "type": "text"
             });
+            expect(replies[1]).toMatchObject({"payload": {"action": "normal_price.more_info"}, "type": "action"});
         });
 
         test('mensagem "vamos lá" seguido de  "em massa" deve retornar action normal_price.more_info', async () => {
@@ -100,19 +108,29 @@ describe('Testes integrados do bot', () => {
                 "type": "action",
                 "payload": {
                     "action": "normal_price.more_info",
-                    "content": "Faça o upload do arquivo modelo de importação preenchido."
+                    "content": "Vamos fazer assim, preenche esse modelo e me manda."
                 }
+            });
+        });
+
+        test('mensagem "vamos lá" seguido de  "um unico item" deve perguntar sobre as informações de alteração de item', async () => {
+            await postTextMessage('vamos lá');
+            const {replies} = await postTextMessage('um único item');
+            expect(replies).toHaveLength(1);
+            expect(replies[0]).toMatchObject({
+                "type": "text",
+                "payload": "Pode me informar, por favor, o valor do novo preço e o código SAP do item?"
             });
         });
 
     });
 
-
     describe('Alteração de preço em massa', () => {
         test('mudar preço normal em massa', async () => {
             const {replies} = await postTextMessage('mudar preço normal em massa');
-            expect(replies).toHaveLength(1);
-            expect(replies[0]).toMatchObject({
+            expect(replies).toHaveLength(2);
+            expect(replies[0]).toMatchObject({"payload": "Tudo bem. Vamos prosseguir com a alteração de preço normal.", "type": "text"});
+            expect(replies[1]).toMatchObject({
                 "type": "action",
                 "payload": {
                     "action": "normal_price.more_info",
@@ -301,18 +319,16 @@ describe('Testes integrados do bot', () => {
             const {replies} = await postTextMessage('mudar preço de um item');
             expect(replies).toHaveLength(1);
             expect(replies[0]).toMatchObject({
-                "type": "text",
-                "payload": "Eu consigo alterar apenas preço normal. Caso queira continuar, me diga se será em massa ou item a item."
+                "payload": "Pode me informar, por favor, o valor do novo preço e o código SAP do item?",
+                "type": "text"
             });
         });
 
         test('mudar preço normal SEM passar SAP ou valor', async () => {
             const {replies} = await postTextMessage('mudar preço normal de um item');
-            expect(replies).toHaveLength(1);
-            expect(replies[0]).toMatchObject({
-                "type": "text",
-                "payload": "Pode me informar, por favor, o valor do novo preço e o código SAP do item?"
-            });
+            expect(replies).toHaveLength(2);
+            expect(replies[0]).toMatchObject({"payload": "Tudo bem. Vamos prosseguir com a alteração de preço normal.", "type": "text"});
+            expect(replies[1]).toMatchObject({"payload": "Pode me informar, por favor, o valor do novo preço e o código SAP do item?", "type": "text"});
         });
 
         test('cancelamento de mudar preço normal', async () => {
@@ -325,19 +341,27 @@ describe('Testes integrados do bot', () => {
             });
         });
 
+        test('mudar de ideia para mudar preço em massa', async () => {
+            await postTextMessage('mudar preço normal de um item');
+            const {replies} = await postTextMessage('na verdade é uma alteração de preço normal em massa');
+            expect(replies).toHaveLength(3);
+            expect(replies[0]).toMatchObject({"payload": "Ok. Tranquilo.", "type": "text"});
+            expect(replies[1]).toMatchObject({"payload": "Tudo bem. Vamos prosseguir com a alteração de preço normal.", "type": "text"});
+            expect(replies[2]).toMatchObject({"payload": {"action": "normal_price.more_info", "content": "Vamos fazer assim, preenche esse modelo e me manda."}, "type": "action"});
+        });
+
         test('mudar preço normal passando apenas o código SAP', async () => {
             const {replies} = await postTextMessage('mudar preço normal do item 2134567');
-            expect(replies).toHaveLength(1);
-            expect(replies[0]).toMatchObject({
-                "type": "text",
-                "payload": "Pode informar, por favor, o valor do novo preço?"
-            });
+            expect(replies).toHaveLength(2);
+            expect(replies[0]).toMatchObject({"payload": "Tudo bem. Vamos prosseguir com a alteração de preço normal.", "type": "text"});
+            expect(replies[1]).toMatchObject({"payload": "Pode informar, por favor, o valor do novo preço?", "type": "text"});
         });
 
         test('mudar preço normal passando apenas o valor', async () => {
             const {replies} = await postTextMessage('mudar preço normal de um item para 20,44 reais');
-            expect(replies).toHaveLength(1);
-            expect(replies[0]).toMatchObject({
+            expect(replies).toHaveLength(2);
+            expect(replies[0]).toMatchObject({"payload": "Tudo bem. Vamos prosseguir com a alteração de preço normal.", "type": "text"});
+            expect(replies[1]).toMatchObject({
                 "type": "text",
                 "payload": "Preciso saber o código SAP do item também, por favor."
             });
@@ -345,8 +369,9 @@ describe('Testes integrados do bot', () => {
 
         test('mudar preço normal passando valor e código SAP', async () => {
             const {replies} = await postTextMessage('mudar preço normal um item para 20 reais de sap 2134567');
-            expect(replies).toHaveLength(1);
-            expect(replies[0]).toMatchObject({
+            expect(replies).toHaveLength(2);
+            expect(replies[0]).toMatchObject({"payload": "Tudo bem. Vamos prosseguir com a alteração de preço normal.", "type": "text"});
+            expect(replies[1]).toMatchObject({
                 "type": "action",
                 "payload": {
                     "action": "normal_price.validate",
@@ -373,10 +398,7 @@ describe('Testes integrados do bot', () => {
 
             const {replies} = await postActionMessage(postedAction);
             expect(replies).toHaveLength(1);
-            expect(replies[0]).toMatchObject({
-                "type": "text",
-                "payload": "Ok. Deseja alterar o valor do item 2134567 para R$ R$ 20,00?"
-            });
+            expect(replies[0]).toMatchObject({"payload": "Ok. Deseja alterar o valor do item 2134567 para R$ 20,00?", "type": "text"});
         });
 
         test('retorno de validacao de codigo SAP para mudanca de preco normal com ERRO', async () => {
@@ -418,15 +440,15 @@ describe('Testes integrados do bot', () => {
                 ]
             });
 
-            const {replies,...rest} = await postTextMessage('sim');
+            const {replies, ...rest} = await postTextMessage('sim');
             expect(replies).toHaveLength(1);
             expect(replies[0]).toMatchObject({
                 "type": "action",
                 "payload": {
                     "action": "normal_price.send",
-                    "content": "suas alterações estão em processamento",
-                    "context":{
-                        "codSap":'000000000002131514',
+                    "content": "Suas alterações estão em processamento.",
+                    "context": {
+                        "codSap": '000000000002131514',
                         "valor": 20.99
                     }
                 }
@@ -446,7 +468,7 @@ describe('Testes integrados do bot', () => {
                 ]
             });
 
-            const {replies,...rest} = await postTextMessage('não');
+            const {replies, ...rest} = await postTextMessage('não');
             expect(replies).toHaveLength(1);
             expect(replies[0]).toMatchObject({
                 "type": "text",
@@ -456,14 +478,13 @@ describe('Testes integrados do bot', () => {
     });
 
     describe('Alteração de preço sem tipo definido', () => {
-        test('Alteração preço sem tipo', async ()=>{
+        test('Alteração preço sem tipo', async () => {
             const {replies} = await postTextMessage('alterar preço');
-            expect(replies).toHaveLength(1);
-            expect(replies[0]).toMatchObject({
-                "type": "text",
-                "payload": "Eu consigo alterar apenas preço normal. Caso queira continuar, me diga se será em massa ou item a item."
-            });
+            expect(replies).toHaveLength(2);
+            expect(replies[0]).toMatchObject({"payload": "Posso realizar a alteração de preço normal. É só me dizer o item e o preço ou baixar este arquivo aqui e me enviar de volta", "type": "text"});
+            expect(replies[1]).toMatchObject({"payload": {"action": "normal_price.more_info"}, "type": "action"});
         });
     });
+
 
 });

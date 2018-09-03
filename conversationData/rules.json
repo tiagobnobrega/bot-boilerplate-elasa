@@ -214,11 +214,11 @@
         "replies": [
           {
             "type": "text",
-            "content": "Desculpe, ainda não realizo alteração de preço promocional, apenas de preço normal. Caso queira realizar a alteração de preço normal, por favor me informe se é em massa ou item a item."
+            "content": "Desculpe, ainda não realizo alteração de preço promocional, apenas de preço normal."
           }
         ],
         "goToDialog": "MUDAR_PRECO_NORMAL",
-        "evaluateNext": false
+        "evaluateNext": true
       }
     ],
     "meta": {
@@ -742,12 +742,7 @@
       {
         "match": "",
         "setContext": "",
-        "replies": [
-          {
-            "type": "text",
-            "content": "Posso alterar o preço normal, se desejar."
-          }
-        ],
+        "replies": [],
         "goToDialog": "MUDAR_PRECO_NORMAL",
         "evaluateNext": true,
         "__error": true
@@ -765,7 +760,7 @@
     "_id": "5b6c97150509ba0046bc26fe",
     "id": "mpn_fallback",
     "dialog": "MUDAR_PRECO_NORMAL",
-    "match": "c=>{\n  const currIntent = _.get(c,\"intents.0\");\n  const avoidIntents = [\n  \"comecar\",\"mudar_preco\",\"mudar_preco_massa\",\"negativo\",\n  ]\n   return (\n     currIntent \n     && avoidIntents.indexOf(currIntent)=== -1\n   )\n}",
+    "match": "c=>{\n  const currIntent = _.get(c,\"intents.0\");\n  const avoidIntents = [\n  \"comecar\",\"mudar_preco\",\"negativo\",\n  ]\n   return (\n     currIntent \n     && avoidIntents.indexOf(currIntent)=== -1\n   )\n}",
     "actions": [
       {
         "match": "",
@@ -776,8 +771,8 @@
       }
     ],
     "meta": {
-      "x": 1958.1676248650251,
-      "y": 551.5715238300147
+      "x": 1946.8326122705666,
+      "y": 555.3498613615009
     },
     "botId": "elasa-preco",
     "_error": true,
@@ -792,14 +787,9 @@
       {
         "match": "",
         "setContext": "",
-        "replies": [
-          {
-            "type": "text",
-            "content": "Eu consigo alterar preço normal. Caso queira realizar essa ação, me informe se deseja realiza em massa ou item a item"
-          }
-        ],
+        "replies": [],
         "goToDialog": "MUDAR_PRECO_NORMAL",
-        "evaluateNext": false,
+        "evaluateNext": true,
         "__error": true
       }
     ],
@@ -831,8 +821,8 @@
       }
     ],
     "meta": {
-      "x": 2678.7156005130496,
-      "y": 548.9486287189867
+      "x": 2684.3831068102786,
+      "y": 326.026714361304
     },
     "botId": "elasa-preco",
     "_error": true,
@@ -885,45 +875,18 @@
       }
     ],
     "meta": {
-      "x": 2683.666666666667,
-      "y": 741.5
+      "x": 2691.2233417296397,
+      "y": 522.3564231738035
     },
     "botId": "elasa-preco",
     "_error": true,
     "priority": 0
   },
   {
-    "_id": "5b6d9bb60509ba0046bc2704",
-    "id": "mpn_qual_tipo_alteracao",
-    "dialog": "MUDAR_PRECO_NORMAL",
-    "match": "c=>_.isNil(_.get(c,\"entities.tipo_alteracao_preco\"))",
-    "actions": [
-      {
-        "match": "",
-        "setContext": "",
-        "replies": [
-          {
-            "type": "text",
-            "content": "Deseja realizar a alteração de preço normal em massa ou item a item ?"
-          }
-        ],
-        "goToDialog": "",
-        "evaluateNext": false
-      }
-    ],
-    "meta": {
-      "x": 1948.136931534233,
-      "y": 57.837831084457726
-    },
-    "botId": "elasa-preco",
-    "_error": true,
-    "priority": -2
-  },
-  {
     "_id": "5b6d96380509ba0046bc2702",
     "id": "pnm_fallback",
     "dialog": "PRECO_NORMAL_MASSA",
-    "match": "",
+    "match": "c=>{\n  const currIntent = _.get(c,\"intents.0\");\n  const avoidIntents = [\n  \"comecar\",\"mudar_preco\",\"negativo\",\n  ]\n   return (\n     currIntent \n     && avoidIntents.indexOf(currIntent)=== -1\n   )\n}",
     "actions": [
       {
         "match": "",
@@ -942,13 +905,13 @@
     "priority": -99
   },
   {
-    "_id": "5b5628e3371ee70037382b79",
-    "id": "ROOT_mudar_preco_em_massa",
-    "dialog": "ROOT",
-    "match": "c=>{\n  return(\n    _.get(c,\"intents.0\") === \"mudar_preco_massa\"\n     || _.get(c,\"userInputType\")==='action'\n    );\n}",
+    "_id": "5b8d47940148c6004ce84898",
+    "id": "pnm_solicitar_arquivo",
+    "dialog": "PRECO_NORMAL_MASSA",
+    "match": "c=>{\n  return(\n    _.get(c,\"userInputType\")!=='action'\n    );\n}",
     "actions": [
       {
-        "match": "c=>_.get(c,'userInputType')!== 'action'",
+        "match": "",
         "setContext": "",
         "replies": [
           {
@@ -958,13 +921,28 @@
         ],
         "goToDialog": "",
         "evaluateNext": false
-      },
+      }
+    ],
+    "meta": {
+      "x": 2687.3602015113347,
+      "y": 705.6914357682621
+    },
+    "botId": "elasa-preco",
+    "_error": true,
+    "priority": 0
+  },
+  {
+    "_id": "5b5628e3371ee70037382b79",
+    "id": "ROOT_mudar_preco_em_massa",
+    "dialog": "ROOT",
+    "match": "c=>{\n  return(\n    _.get(c,\"intents.0\") === \"mudar_preco_massa\"\n     || _.get(c,\"userInputType\")==='action'\n    );\n}",
+    "actions": [
       {
         "match": "",
         "setContext": "",
         "replies": [],
         "goToDialog": "PRECO_NORMAL_MASSA",
-        "evaluateNext": false
+        "evaluateNext": true
       }
     ],
     "meta": {
@@ -979,7 +957,7 @@
     "_id": "5b5f21670509ba0046bc26f6",
     "id": "pnu_dadosIncompletos",
     "dialog": "PRECO_NORMAL_UNITARIO",
-    "match": "c=> (!_.get(c,'currency') || !_.get(c,'codSapCandidate')) \n&& (_.get(c,\"intents.0\") !== \"negativo\" && _.get(c,\"intents.0\") !== \"mudar_preco_massa\")",
+    "match": "c=> (!_.get(c,'currency') || !_.get(c,'codSapCandidate')) \n&& (_.get(c,\"intents.0\") !== \"negativo\" && _.last(_.get(c,\"entities.tipo_alteracao_preco\")) !== \"em_massa\")",
     "actions": [
       {
         "match": "c=> {return (!_.get(c,'currency') \n\t&& !_.get(c,'codSapCandidate') \n\t&& _.get(c, 'repeatCount',0)<4\n    )}",
@@ -1140,14 +1118,9 @@
       {
         "match": "",
         "setContext": "",
-        "replies": [
-          {
-            "type": "text",
-            "content": "Eu consigo somente alterar preço normal. Caso queira continuar, me diga se será em massa ou item a item."
-          }
-        ],
+        "replies": [],
         "goToDialog": "MUDAR_PRECO_NORMAL",
-        "evaluateNext": false,
+        "evaluateNext": true,
         "__error": true
       }
     ],
@@ -1163,10 +1136,10 @@
     "_id": "5b6c95800509ba0046bc26fd",
     "id": "mpn_tipo_alteracao",
     "dialog": "MUDAR_PRECO_NORMAL",
-    "match": "c=>{\n  const currIntent = _.get(c,\"intents.0\");\n  const avoidIntents = [\n  \"modulacao\",\"grade\",\"promocao\",\"baixa_imediata\"\n  ]\n  \treturn (\n      \t(\n     \t\t!currIntent || avoidIntents.indexOf(currIntent)=== -1\n   \t  \t)\n  \t\t&& !_.isNil(_.get(c,\"entities.tipo_alteracao_preco\"))\n\t)\n}",
+    "match": "c=>{\n  const currIntent = _.get(c,\"intents.0\");\n  const avoidIntents = [\n  \"modulacao\",\"grade\",\"promocao\",\"baixa_imediata\"\n  ]\n  \treturn (\n      \t(\n     \t\t!currIntent || avoidIntents.indexOf(currIntent)=== -1\n   \t  \t)\n  \t\t&& (\n          !_.isNil(_.get(c,\"entities.tipo_alteracao_preco\"))\n          || _.get(c,'currency') \n          || _.get(c,'codSapCandidate')\n        )\n\t)\n}",
     "actions": [
       {
-        "match": "c=>_.get(c,\"entities.tipo_alteracao_preco.0\")==='unitario'",
+        "match": "c=>{\n return ( \n   _.last(_.get(c,\"entities.tipo_alteracao_preco\"))==='unitario'\n   || _.get(c,'currency') \n   || _.get(c,'codSapCandidate')\n )\n}",
         "setContext": "",
         "replies": [],
         "goToDialog": "PRECO_NORMAL_UNITARIO",
@@ -1174,19 +1147,14 @@
         "__error": true
       },
       {
-        "match": "c=>_.get(c,\"entities.tipo_alteracao_preco.0\")==='em_massa'",
+        "match": "c=>{\n  return (\n    _.last(_.get(c,\"entities.tipo_alteracao_preco\"))==='em_massa'\n    || _.get(c,\"userInputType\")==='action'\n         )\n}",
         "setContext": "",
-        "replies": [
-          {
-            "type": "function",
-            "content": "({session,context,scripts})=>{\n        return {reply:\n                {\n                    \"type\": \"action\",\n                    \"payload\": {\n                        \"action\": \"normal_price.more_info\",\n                        \"content\": \"Vamos fazer assim, preenche esse modelo e me manda.\",\n                    }\n                }\n        }\n    }"
-          }
-        ],
+        "replies": [],
         "goToDialog": "PRECO_NORMAL_MASSA",
-        "evaluateNext": false
+        "evaluateNext": true
       },
       {
-        "match": "c=>_.get(c,\"entities.tipo_alteracao_preco\").length>3",
+        "match": "c=>_.get(c,\"entities.tipo_alteracao_preco\",[]).length>3",
         "setContext": "c=>({...c,entities:{...c.entities, tipo_alteracao_preco:null}})",
         "replies": [
           {
@@ -1210,7 +1178,7 @@
     "_id": "5b1ad3e4371ee70037382b62",
     "id": "pnu_Rollback",
     "dialog": "PRECO_NORMAL_UNITARIO",
-    "match": "(c)=>_.get(c,\"intents.0\")===\"negativo\" || _.get(c,\"intents.0\")===\"mudar_preco_massa\"",
+    "match": "(c)=>_.get(c,\"intents.0\")===\"negativo\" || _.last(_.get(c,\"entites.tipo_alteracao_preco\")) !== \"em_massa\"",
     "actions": [
       {
         "match": "c=>_.get(c,\"intents.0\")===\"negativo\"",
@@ -1225,8 +1193,8 @@
         "evaluateNext": false
       },
       {
-        "match": "c=>_.get(c,\"intents.0\")===\"mudar_preco_massa\"",
-        "setContext": "",
+        "match": "c=>_.last(_.get(c,\"entities.tipo_alteracao_preco\")) === \"em_massa\"",
+        "setContext": "c=>({...c, intents: c.intents || ['mudar_preco']})",
         "replies": [
           {
             "type": "text",
@@ -1257,11 +1225,11 @@
         "replies": [
           {
             "type": "text",
-            "content": "Oi, eu sou a Laís, a Inteligência Artificial do DCM Digital. Por enquanto estou aqui para te ajudar a realizar a alteração de preço normal item a item ou em massa. Caso queira realizar um dos dois tipos, é só me dizer."
+            "content": "Oi, eu sou a Laís, a Inteligência Artificial do Elasa. Ainda estou aprendendo a realizar as tarefas da área Comercial. Por enquanto, já sei realizar alterações de preço normal. Quer testar? É só me dizer o item e o preço ou baixar este arquivo aqui e me enviar de volta, tá bom?"
           },
           {
             "type": "function",
-            "content": "({session,context,scripts})=>{\n        return {reply:\n                {\n                    \"type\": \"action\",\n                    \"payload\": {\n                        \"action\": \"normal_price.more_info\",\n                        \"content\": \"Vamos fazer assim, preenche esse modelo e me manda.\",\n                    }\n                }\n        }\n    }"
+            "content": "({session,context,scripts})=>{\n        return {reply:\n                {\n                    \"type\": \"action\",\n                    \"payload\": {\n                        \"action\": \"normal_price.more_info\",\n                    }\n                }\n        }\n    }"
           }
         ],
         "goToDialog": "MUDAR_PRECO_NORMAL",
@@ -1276,5 +1244,36 @@
     "botId": "elasa-preco",
     "_error": true,
     "priority": 3
+  },
+  {
+    "_id": "5b6d9bb60509ba0046bc2704",
+    "id": "mpn_qual_tipo_alteracao",
+    "dialog": "MUDAR_PRECO_NORMAL",
+    "match": "c=>_.isNil(_.get(c,\"entities.tipo_alteracao_preco\"))",
+    "actions": [
+      {
+        "match": "",
+        "setContext": "",
+        "replies": [
+          {
+            "type": "text",
+            "content": "Posso realizar a alteração de preço normal. É só me dizer o item e o preço ou baixar este arquivo aqui e me enviar de volta"
+          },
+          {
+            "type": "function",
+            "content": "({session,context,scripts})=>{\n        return {reply:\n                {\n                    \"type\": \"action\",\n                    \"payload\": {\n                        \"action\": \"normal_price.more_info\",\n                    }\n                }\n        }\n    }"
+          }
+        ],
+        "goToDialog": "",
+        "evaluateNext": false
+      }
+    ],
+    "meta": {
+      "x": 1948.136931534233,
+      "y": 57.837831084457726
+    },
+    "botId": "elasa-preco",
+    "_error": true,
+    "priority": 0
   }
 ]

@@ -60,7 +60,7 @@ let LaisDialog = function(initArgs) {
     context = mergeContext(context, aiResponse, userMessage);
     logger.debug(chalk.cyan("context: "+printObj(context)));
     const ret = resolveWithContext(context);
-    logger.debug('return',ret);
+    logger.debug('resolve final return',printObj(ret));
     logger.debug(chalk.blue("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"));
     return ret;
   };
@@ -204,7 +204,7 @@ let LaisDialog = function(initArgs) {
           //logger.trace("applyActions(2)::context=" + printObj(context));
           let ret = resolveWithContext(context);//recursion
           context = ret.context;
-            logger.trace('recursion replies=',ret);
+            logger.trace('recursion replies=',printObj(ret));
           if (ret.replies) {
             replies = replies.concat(ret.replies);
           }
