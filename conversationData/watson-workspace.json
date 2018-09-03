@@ -1,0 +1,1895 @@
+{
+  "name": "ELASA-PRECO NORMAL",
+  "intents": [
+    {
+      "intent": "promocao",
+      "examples": [
+        {
+          "text": "promocao"
+        },
+        {
+          "text": "promocionar"
+        },
+        {
+          "text": "promoção"
+        },
+        {
+          "text": "promocional"
+        },
+        {
+          "text": "preço promocional"
+        }
+      ],
+      "description": "usuário se referir unica e exclusivamente à promoção ou algo do tipo"
+    },
+    {
+      "intent": "duvida_usuario",
+      "examples": [
+        {
+          "text": "talvez"
+        },
+        {
+          "text": "sei lá"
+        },
+        {
+          "text": "não sei"
+        },
+        {
+          "text": "tanto faz"
+        },
+        {
+          "text": "ainda não sei"
+        },
+        {
+          "text": "nem sei"
+        },
+        {
+          "text": "vai saber"
+        }
+      ],
+      "description": "Intenção do usuário de incerteza ( não sei ; sei lá ; tanto faz...)"
+    },
+    {
+      "intent": "modulacao",
+      "examples": [
+        {
+          "text": "catalogar item"
+        },
+        {
+          "text": "criar modulação"
+        },
+        {
+          "text": "modular item"
+        },
+        {
+          "text": "preciso modular itens"
+        },
+        {
+          "text": "quero modular o item"
+        },
+        {
+          "text": "quero modular um item"
+        },
+        {
+          "text": "erro de catalogação item"
+        }
+      ],
+      "description": "Intenções voltadas às modulações de item"
+    },
+    {
+      "intent": "start_conversation",
+      "examples": [
+        {
+          "text": "##start_conversation@@"
+        }
+      ],
+      "description": "Intenção mockada para retorno da apresentação do bot."
+    },
+    {
+      "intent": "agradecimento",
+      "examples": [
+        {
+          "text": "muito obrigado"
+        },
+        {
+          "text": "tchau"
+        },
+        {
+          "text": "show"
+        },
+        {
+          "text": "muito obrigada"
+        },
+        {
+          "text": "vlw"
+        },
+        {
+          "text": "obrigada"
+        },
+        {
+          "text": "obrigado"
+        },
+        {
+          "text": "tamo junto"
+        },
+        {
+          "text": "tmj"
+        },
+        {
+          "text": "valeu"
+        },
+        {
+          "text": "ok"
+        },
+        {
+          "text": "sim"
+        },
+        {
+          "text": "ta valendo"
+        },
+        {
+          "text": "ta bem"
+        },
+        {
+          "text": "abraco"
+        },
+        {
+          "text": "abç"
+        },
+        {
+          "text": "abc"
+        },
+        {
+          "text": "abraço"
+        },
+        {
+          "text": "bjs"
+        },
+        {
+          "text": "beijos"
+        },
+        {
+          "text": "beijo"
+        }
+      ],
+      "description": "intenções para retorno a um agradecimento."
+    },
+    {
+      "intent": "leve_ganhe",
+      "examples": [
+        {
+          "text": "campanha leve ganhe"
+        },
+        {
+          "text": "desconto leve e ganhe"
+        },
+        {
+          "text": "leve e ganhe"
+        }
+      ],
+      "description": "Intenções voltadas ao método \"Leve e ganhe\"."
+    },
+    {
+      "intent": "grade",
+      "examples": [
+        {
+          "text": "mudar grade"
+        },
+        {
+          "text": "calcular grade"
+        },
+        {
+          "text": "grade"
+        }
+      ],
+      "description": "intenções voltadas à grade."
+    },
+    {
+      "intent": "ping",
+      "examples": [
+        {
+          "text": "/ping"
+        },
+        {
+          "text": "ping"
+        },
+        {
+          "text": "!ping"
+        }
+      ],
+      "description": "ping"
+    },
+    {
+      "intent": "me_sinto_bem",
+      "examples": [
+        {
+          "text": "estou incrível"
+        },
+        {
+          "text": "estou bem"
+        },
+        {
+          "text": "ando bem"
+        },
+        {
+          "text": "estou me sentindo bem"
+        },
+        {
+          "text": "me sinto bem"
+        },
+        {
+          "text": "estou ótimo"
+        },
+        {
+          "text": "tenho estado bem"
+        },
+        {
+          "text": "tenho estado ótimo"
+        },
+        {
+          "text": "feliz"
+        },
+        {
+          "text": "muito bem"
+        },
+        {
+          "text": "legal"
+        },
+        {
+          "text": "maravilhoso"
+        },
+        {
+          "text": "nunca estive melhor"
+        },
+        {
+          "text": "sempre bem"
+        },
+        {
+          "text": "bem"
+        },
+        {
+          "text": "estou alegre"
+        },
+        {
+          "text": "contente"
+        },
+        {
+          "text": "alegre"
+        },
+        {
+          "text": "incrível"
+        },
+        {
+          "text": "tudo"
+        },
+        {
+          "text": "tudo bem"
+        },
+        {
+          "text": "estou ótima"
+        },
+        {
+          "text": "me sinto ótima"
+        },
+        {
+          "text": "me sinto ótimo"
+        }
+      ],
+      "description": "Intenções para o usuário dizer como se sente ( bem , legal , feliz , ótimo.)"
+    },
+    {
+      "intent": "negativo",
+      "examples": [
+        {
+          "text": "no"
+        },
+        {
+          "text": "não quero mais fazer isso"
+        },
+        {
+          "text": "não quero mais enviar"
+        },
+        {
+          "text": "não quero mais"
+        },
+        {
+          "text": "gostaria de desistir"
+        },
+        {
+          "text": "finalizar"
+        },
+        {
+          "text": "esquece"
+        },
+        {
+          "text": "desisto"
+        },
+        {
+          "text": "desistir"
+        },
+        {
+          "text": "chega"
+        },
+        {
+          "text": "cancelar o envio"
+        },
+        {
+          "text": "cancelar a solicitação"
+        },
+        {
+          "text": "cancela"
+        },
+        {
+          "text": "cancel"
+        },
+        {
+          "text": "aborta"
+        },
+        {
+          "text": "abortar"
+        },
+        {
+          "text": "outra hora"
+        },
+        {
+          "text": "deixa para la"
+        },
+        {
+          "text": "mudei de ideia"
+        },
+        {
+          "text": "não quero isso"
+        },
+        {
+          "text": "não é o que eu quero"
+        },
+        {
+          "text": "não é isso"
+        },
+        {
+          "text": "agora não"
+        },
+        {
+          "text": "nenhum"
+        },
+        {
+          "text": "stop"
+        },
+        {
+          "text": "parar"
+        },
+        {
+          "text": "cancelar"
+        },
+        {
+          "text": "nada"
+        },
+        {
+          "text": "quero fazer outra coisa"
+        },
+        {
+          "text": "n"
+        },
+        {
+          "text": "não"
+        },
+        {
+          "text": "nope"
+        },
+        {
+          "text": "não quero"
+        },
+        {
+          "text": "rollback"
+        }
+      ],
+      "description": "negar alguma resposta"
+    },
+    {
+      "intent": "elogio_lais",
+      "examples": [
+        {
+          "text": "maravilhosa"
+        },
+        {
+          "text": "inteligente"
+        },
+        {
+          "text": "demais"
+        },
+        {
+          "text": "sensacional"
+        },
+        {
+          "text": "esperta"
+        },
+        {
+          "text": "sabida"
+        },
+        {
+          "text": "Linda"
+        }
+      ],
+      "description": "Aqui estão intenções voltadas a elogios à Lais."
+    },
+    {
+      "intent": "mudar_preco_massa",
+      "examples": [
+        {
+          "text": "alterar o preço de vários itens"
+        },
+        {
+          "text": "alterar o preço em massa"
+        },
+        {
+          "text": "virar vários itens"
+        },
+        {
+          "text": "gostaria de alterar o preço de mais de um item"
+        },
+        {
+          "text": "você consegue alterar o preço de muitos itens de uma vez?"
+        },
+        {
+          "text": "alterar o preço de itens"
+        },
+        {
+          "text": "alterar vários itens"
+        },
+        {
+          "text": "subir planilha de alteração de preço"
+        },
+        {
+          "text": "fazer alteração no preço de alguns itens"
+        },
+        {
+          "text": "alterar o preço normal de diversos itens"
+        },
+        {
+          "text": "alterar vários"
+        },
+        {
+          "text": "alterar alguns itens"
+        },
+        {
+          "text": "virar alguns itens"
+        },
+        {
+          "text": "alterar em massa"
+        }
+      ],
+      "description": "Alteração de preço em massa."
+    },
+    {
+      "intent": "mudar_preco",
+      "examples": [
+        {
+          "text": "alterar preço item a item"
+        },
+        {
+          "text": "quero alterar vkp0"
+        },
+        {
+          "text": "quero atualizar o preço do item"
+        },
+        {
+          "text": "mudar"
+        },
+        {
+          "text": "alterar"
+        },
+        {
+          "text": "preço"
+        },
+        {
+          "text": "alterar preço"
+        },
+        {
+          "text": "criar envio preço"
+        },
+        {
+          "text": "mudar preço"
+        },
+        {
+          "text": "Quero alterar preço"
+        },
+        {
+          "text": "quero mudar preço"
+        },
+        {
+          "text": "virar preço"
+        },
+        {
+          "text": "trocar preço"
+        },
+        {
+          "text": "enviar o preço de um item"
+        }
+      ],
+      "description": "Identificar mudança de preço"
+    },
+    {
+      "intent": "quem_e_lais",
+      "examples": [
+        {
+          "text": "é você"
+        },
+        {
+          "text": "quem é"
+        },
+        {
+          "text": "qual seu nome"
+        },
+        {
+          "text": "você é mulher"
+        },
+        {
+          "text": "você é um robô"
+        },
+        {
+          "text": "quem é tu"
+        },
+        {
+          "text": "como você é"
+        },
+        {
+          "text": "o que você é"
+        },
+        {
+          "text": "você existe"
+        },
+        {
+          "text": "quem é você"
+        },
+        {
+          "text": "quem é vc"
+        }
+      ],
+      "description": ":::: Humanizando o BOT :::: Intenções voltadas à LAIS."
+    },
+    {
+      "intent": "idade_lais",
+      "examples": [
+        {
+          "text": "Quanto anos você tem"
+        },
+        {
+          "text": "você é nova ?"
+        },
+        {
+          "text": "você é velha ?"
+        },
+        {
+          "text": "Qual a sua idade"
+        },
+        {
+          "text": "qual idade"
+        }
+      ],
+      "description": "Idade da Lais"
+    },
+    {
+      "intent": "baixa_imediata",
+      "examples": [
+        {
+          "text": "criar baixa"
+        },
+        {
+          "text": "fazer baixa"
+        },
+        {
+          "text": "forçar preço"
+        }
+      ],
+      "description": "Intenções voltadas às baixas"
+    },
+    {
+      "intent": "ajudar_como",
+      "examples": [
+        {
+          "text": "ajudar em que ?"
+        },
+        {
+          "text": "como?"
+        },
+        {
+          "text": "ajudar?"
+        },
+        {
+          "text": "ajudar como ?"
+        }
+      ],
+      "description": "Intenções para o usuário indagar ao BOT como pode ser ajudado."
+    },
+    {
+      "intent": "pcompras",
+      "examples": [
+        {
+          "text": "plano do orcado"
+        },
+        {
+          "text": "plano do orçado"
+        },
+        {
+          "text": "planejamento do orçado"
+        },
+        {
+          "text": "planejamento do orcado"
+        },
+        {
+          "text": "plano de compra"
+        },
+        {
+          "text": "planejamento comercial"
+        },
+        {
+          "text": "pcompras"
+        },
+        {
+          "text": "orçado"
+        },
+        {
+          "text": "orcado"
+        },
+        {
+          "text": "plano comercial"
+        }
+      ],
+      "description": "Intenções acerca do PCOMPRAS"
+    },
+    {
+      "intent": "xingamento",
+      "examples": [
+        {
+          "text": "sua puta"
+        },
+        {
+          "text": "foda-se"
+        },
+        {
+          "text": "vá se foder"
+        },
+        {
+          "text": "vá tomar no cu"
+        },
+        {
+          "text": "foder"
+        },
+        {
+          "text": "caralho"
+        },
+        {
+          "text": "viado"
+        },
+        {
+          "text": "burra"
+        },
+        {
+          "text": "sabe nada"
+        },
+        {
+          "text": "idiota"
+        },
+        {
+          "text": "estupida"
+        },
+        {
+          "text": "anta"
+        },
+        {
+          "text": "piranha"
+        },
+        {
+          "text": "fdp"
+        },
+        {
+          "text": "tnc"
+        },
+        {
+          "text": "vsf"
+        },
+        {
+          "text": "escrota"
+        },
+        {
+          "text": "filha de uma puta"
+        },
+        {
+          "text": "vadia"
+        },
+        {
+          "text": "cachorra do caralho"
+        },
+        {
+          "text": "vagabunda"
+        },
+        {
+          "text": "tomar no olho do seu cu"
+        },
+        {
+          "text": "arrombada"
+        },
+        {
+          "text": "imbecil"
+        },
+        {
+          "text": "mongol"
+        },
+        {
+          "text": "retardada"
+        },
+        {
+          "text": "tá de sacanagem ?"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "intent": "comecar",
+      "examples": [
+        {
+          "text": "vamos"
+        },
+        {
+          "text": "começa"
+        },
+        {
+          "text": "bora começar"
+        },
+        {
+          "text": "simbora"
+        },
+        {
+          "text": "vamo que vamo"
+        },
+        {
+          "text": "bora"
+        },
+        {
+          "text": "go go go"
+        },
+        {
+          "text": "começa logo"
+        },
+        {
+          "text": "vamos começar"
+        },
+        {
+          "text": "podemos seguir"
+        },
+        {
+          "text": "vambora"
+        },
+        {
+          "text": "vamos nessa"
+        },
+        {
+          "text": "vamos lá"
+        }
+      ],
+      "description": "inenção de  inicio de uma ação, start d um processo"
+    },
+    {
+      "intent": "emitir_pedido",
+      "examples": [
+        {
+          "text": "emissão de pedido"
+        },
+        {
+          "text": "emitir pedido"
+        },
+        {
+          "text": "criar pedido"
+        }
+      ],
+      "description": "Intenções voltadas à emissão de pedido."
+    },
+    {
+      "intent": "pode_ajudar",
+      "examples": [
+        {
+          "text": "preciso de ajuda"
+        },
+        {
+          "text": "pode me ajudar ?"
+        },
+        {
+          "text": "me da uma ajuda ?"
+        },
+        {
+          "text": "consegue me ajudar?"
+        },
+        {
+          "text": "quero uma ajuda"
+        },
+        {
+          "text": "uma ajudinha por favor"
+        },
+        {
+          "text": "me ajuda com uma coisa"
+        },
+        {
+          "text": "preciso de uma ajuda"
+        }
+      ],
+      "description": "Intenções voltadas à indagação ao BOT por ajuda."
+    },
+    {
+      "intent": "me_sinto_mal",
+      "examples": [
+        {
+          "text": "estou mal"
+        },
+        {
+          "text": "não estou bem"
+        },
+        {
+          "text": "mais ou menos"
+        },
+        {
+          "text": "triste"
+        },
+        {
+          "text": "péssimo"
+        },
+        {
+          "text": "muito mal"
+        },
+        {
+          "text": "me sinto mal"
+        },
+        {
+          "text": "terrível"
+        },
+        {
+          "text": "insatisfeito"
+        }
+      ],
+      "description": "intenções para o mal"
+    },
+    {
+      "intent": "oi",
+      "examples": [
+        {
+          "text": "oiii"
+        },
+        {
+          "text": "boa noite"
+        },
+        {
+          "text": "boa tarde"
+        },
+        {
+          "text": "bom dia"
+        },
+        {
+          "text": "hello"
+        },
+        {
+          "text": "olá"
+        },
+        {
+          "text": "oii"
+        },
+        {
+          "text": "oi"
+        },
+        {
+          "text": "ola me ajuda"
+        },
+        {
+          "text": "ola"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "intent": "como_lais_esta",
+      "examples": [
+        {
+          "text": "você tá bem"
+        },
+        {
+          "text": "como você está ?"
+        },
+        {
+          "text": "como está"
+        },
+        {
+          "text": "tudo bem ?"
+        },
+        {
+          "text": "Como vai?"
+        },
+        {
+          "text": "Você está bem ?"
+        },
+        {
+          "text": "tudo beleza ?"
+        }
+      ],
+      "description": "Intenções voltadas à indagações sobre o estado da Lais."
+    },
+    {
+      "intent": "funcionamento",
+      "examples": [
+        {
+          "text": "Como você funciona"
+        },
+        {
+          "text": "funcionamento seu"
+        },
+        {
+          "text": "funcionamento"
+        }
+      ],
+      "description": "robo"
+    },
+    {
+      "intent": "positivo",
+      "examples": [
+        {
+          "text": "ok"
+        },
+        {
+          "text": "isso"
+        },
+        {
+          "text": "exatamente"
+        },
+        {
+          "text": "isso mesmo"
+        },
+        {
+          "text": "correto"
+        },
+        {
+          "text": "certo"
+        },
+        {
+          "text": "uhum"
+        },
+        {
+          "text": "é"
+        },
+        {
+          "text": "quero"
+        },
+        {
+          "text": "claro"
+        },
+        {
+          "text": "sim"
+        },
+        {
+          "text": "s"
+        },
+        {
+          "text": "yes"
+        },
+        {
+          "text": "vamos"
+        },
+        {
+          "text": "gostaria"
+        },
+        {
+          "text": "pode ser"
+        },
+        {
+          "text": "y"
+        },
+        {
+          "text": "com certeza"
+        },
+        {
+          "text": "obvio"
+        },
+        {
+          "text": "ótimo"
+        },
+        {
+          "text": "maravilhoso"
+        },
+        {
+          "text": "incrível"
+        },
+        {
+          "text": "bem"
+        }
+      ],
+      "description": "positivo para alguma resposta"
+    },
+    {
+      "intent": "funcao_lais",
+      "examples": [
+        {
+          "text": "Porque você esta aqui"
+        },
+        {
+          "text": "O que você faz aqui"
+        },
+        {
+          "text": "O que voce esta fazendo aqui"
+        },
+        {
+          "text": "O que voce esta fazendo"
+        },
+        {
+          "text": "o que você sabe fazer"
+        },
+        {
+          "text": "Qual o seu papel"
+        },
+        {
+          "text": "Qual o seu trabalho"
+        },
+        {
+          "text": "Qual a sua função"
+        },
+        {
+          "text": "O que você faz"
+        }
+      ],
+      "description": "Usuário perguntar à Lais o que ela faz"
+    }
+  ],
+  "entities": [
+    {
+      "entity": "sys-currency",
+      "values": []
+    },
+    {
+      "entity": "tipo_preco",
+      "values": [
+        {
+          "type": "synonyms",
+          "value": "preco_normal",
+          "synonyms": [
+            "preço normal",
+            "normal",
+            "vkp0",
+            "preço base"
+          ]
+        },
+        {
+          "type": "synonyms",
+          "value": "preco_promocional",
+          "synonyms": [
+            "promoção",
+            "promocional",
+            "preço promocional"
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "agradecimento",
+      "values": [
+        {
+          "type": "synonyms",
+          "value": "agradecimento",
+          "synonyms": [
+            "ok",
+            "vlw",
+            "valeu",
+            "obrigado",
+            "obrigada",
+            "muito obrigada",
+            "muito obrigado"
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "tipo_alteracao_preco",
+      "values": [
+        {
+          "type": "synonyms",
+          "value": "em_massa",
+          "synonyms": [
+            "em massa",
+            "vários",
+            "diversos",
+            "um lote",
+            "um grupo",
+            "um pacote"
+          ]
+        },
+        {
+          "type": "synonyms",
+          "value": "unitario",
+          "synonyms": [
+            "item a item",
+            "um item",
+            "item",
+            "um único item",
+            "somente um",
+            "unitario",
+            "apenas o item",
+            "apenas o",
+            "somente o item",
+            "o item"
+          ]
+        }
+      ]
+    }
+  ],
+  "language": "pt-br",
+  "metadata": {
+    "api_version": {
+      "major_version": "v1",
+      "minor_version": "2018-07-10"
+    }
+  },
+  "description": "ChatBot de envio de preço normal",
+  "dialog_nodes": [
+    {
+      "type": "slot",
+      "parent": "node_5_1516985690196",
+      "dialog_node": "slot_15_1516986907374"
+    },
+    {
+      "type": "standard",
+      "title": "Encerrando",
+      "output": {
+        "text": {
+          "values": [],
+          "selection_policy": "sequential"
+        }
+      },
+      "parent": "node_20_1516987320514",
+      "metadata": {},
+      "next_step": {
+        "behavior": "jump_to",
+        "selector": "body",
+        "dialog_node": "node_1_1517412182289"
+      },
+      "conditions": "#negativo",
+      "dialog_node": "node_14_1517334600100"
+    },
+    {
+      "type": "event_handler",
+      "output": {},
+      "parent": "slot_85_1516736089194",
+      "context": {
+        "item": "@Itens_Dpto"
+      },
+      "metadata": {},
+      "conditions": "@Itens_Dpto",
+      "event_name": "input",
+      "dialog_node": "handler_86_1516736089194",
+      "previous_sibling": "handler_87_1516736089194"
+    },
+    {
+      "type": "event_handler",
+      "output": {
+        "text": {
+          "values": [
+            "Não achei o cód SAP, tenta de novo?",
+            "Não achei o cód SAP, pode enviar novamente?"
+          ],
+          "selection_policy": "random"
+        }
+      },
+      "parent": "slot_85_1516736089194",
+      "metadata": {},
+      "event_name": "nomatch",
+      "dialog_node": "handler_95_1516736721236",
+      "previous_sibling": "handler_99_1516736864635"
+    },
+    {
+      "type": "event_handler",
+      "output": {
+        "text": {
+          "values": [
+            ""
+          ],
+          "selection_policy": "sequential"
+        }
+      },
+      "parent": "slot_85_1516736089194",
+      "metadata": {},
+      "event_name": "filled",
+      "dialog_node": "handler_99_1516736864635",
+      "previous_sibling": "handler_86_1516736089194"
+    },
+    {
+      "type": "event_handler",
+      "output": {
+        "text": "Faltou o cód SAP, pode me informar?"
+      },
+      "parent": "slot_85_1516736089194",
+      "metadata": {},
+      "event_name": "focus",
+      "dialog_node": "handler_87_1516736089194"
+    },
+    {
+      "type": "standard",
+      "title": "Não",
+      "output": {
+        "text": {
+          "values": [
+            "Tudo bem! Estou sempre a disposição!"
+          ],
+          "selection_policy": "sequential"
+        }
+      },
+      "parent": "Bem-vindo",
+      "metadata": {},
+      "conditions": "#negativo",
+      "dialog_node": "node_23_1517335198983"
+    },
+    {
+      "type": "event_handler",
+      "output": {},
+      "parent": "slot_6_1517333346770",
+      "event_name": "focus",
+      "dialog_node": "handler_8_1517333346770",
+      "previous_sibling": "handler_7_1517333346770"
+    },
+    {
+      "type": "event_handler",
+      "parent": "slot_6_1517333346770",
+      "context": {
+        "Itens_Dpto": "@Itens_Dpto"
+      },
+      "conditions": "@Itens_Dpto",
+      "event_name": "input",
+      "dialog_node": "handler_7_1517333346770"
+    },
+    {
+      "type": "event_handler",
+      "output": {},
+      "parent": "slot_10_1516986465422",
+      "event_name": "focus",
+      "dialog_node": "handler_12_1516986465422",
+      "previous_sibling": "handler_11_1516986465422"
+    },
+    {
+      "type": "event_handler",
+      "parent": "slot_10_1516986465422",
+      "context": {
+        "preco": "@sys-currency"
+      },
+      "conditions": "@sys-currency",
+      "event_name": "input",
+      "dialog_node": "handler_11_1516986465422"
+    },
+    {
+      "type": "standard",
+      "title": "Encerrando",
+      "output": {
+        "text": {
+          "values": [],
+          "selection_policy": "sequential"
+        }
+      },
+      "parent": "Em outros casos",
+      "metadata": {},
+      "next_step": {
+        "behavior": "jump_to",
+        "selector": "body",
+        "dialog_node": "node_1_1517412182289"
+      },
+      "conditions": "#negativo",
+      "dialog_node": "node_22_1517335176710"
+    },
+    {
+      "type": "slot",
+      "parent": "node_50_1516732001575",
+      "dialog_node": "slot_18_1517334711353",
+      "previous_sibling": "node_1_1517408491961"
+    },
+    {
+      "type": "event_handler",
+      "output": {
+        "text": {
+          "values": [
+            "okokokk"
+          ],
+          "selection_policy": "sequential"
+        }
+      },
+      "parent": "node_50_1516732001575",
+      "disabled": true,
+      "metadata": {},
+      "event_name": "focus",
+      "dialog_node": "handler_51_1516732132407",
+      "previous_sibling": "slot_18_1517334711353"
+    },
+    {
+      "type": "standard",
+      "title": "Encerrando",
+      "output": {
+        "text": {
+          "values": [],
+          "selection_policy": "sequential"
+        }
+      },
+      "parent": "node_50_1516732001575",
+      "metadata": {},
+      "next_step": {
+        "behavior": "jump_to",
+        "selector": "body",
+        "dialog_node": "node_1_1517412182289"
+      },
+      "conditions": "#negativo",
+      "dialog_node": "node_1_1517408491961",
+      "previous_sibling": "node_1_1517335775094"
+    },
+    {
+      "type": "standard",
+      "title": "Não entendeu - copy1",
+      "output": {
+        "text": {
+          "values": [
+            "Não entendi qual o item, poderia informar novamente?"
+          ],
+          "selection_policy": "sequential"
+        }
+      },
+      "parent": "node_50_1516732001575",
+      "metadata": {},
+      "next_step": {
+        "behavior": "jump_to",
+        "selector": "user_input",
+        "dialog_node": "node_83_1516736060603"
+      },
+      "conditions": "anything_else",
+      "dialog_node": "node_1_1517335775094",
+      "previous_sibling": "node_83_1516736060603"
+    },
+    {
+      "type": "frame",
+      "title": "Checar item",
+      "output": {
+        "text": {
+          "values": [
+            "Beleza, eu vou enviar o item $item com o preço de R$ $preco para todas as lojas. ok?"
+          ],
+          "selection_policy": "sequential"
+        }
+      },
+      "parent": "node_50_1516732001575",
+      "metadata": {
+        "fallback": "leave",
+        "_customization": {
+          "mcr": false
+        }
+      },
+      "conditions": "@Itens_Dpto || @sys-currency",
+      "dialog_node": "node_83_1516736060603",
+      "digress_out": "allow_all",
+      "digress_out_slots": "not_allowed"
+    },
+    {
+      "type": "event_handler",
+      "output": {},
+      "parent": "slot_18_1517334711353",
+      "event_name": "focus",
+      "dialog_node": "handler_20_1517334711353",
+      "previous_sibling": "handler_19_1517334711353"
+    },
+    {
+      "type": "event_handler",
+      "parent": "slot_18_1517334711353",
+      "event_name": "input",
+      "dialog_node": "handler_19_1517334711353"
+    },
+    {
+      "type": "event_handler",
+      "output": {},
+      "parent": "slot_7_1516986440585",
+      "event_name": "focus",
+      "dialog_node": "handler_9_1516986440585",
+      "previous_sibling": "handler_8_1516986440585"
+    },
+    {
+      "type": "event_handler",
+      "parent": "slot_7_1516986440585",
+      "context": {
+        "item": "@Itens_Dpto"
+      },
+      "conditions": "@Itens_Dpto",
+      "event_name": "input",
+      "dialog_node": "handler_8_1516986440585"
+    },
+    {
+      "type": "event_handler",
+      "output": {},
+      "parent": "slot_11_1517333393265",
+      "event_name": "focus",
+      "dialog_node": "handler_13_1517333393265",
+      "previous_sibling": "handler_12_1517333393265"
+    },
+    {
+      "type": "event_handler",
+      "output": {},
+      "parent": "slot_11_1517333393265",
+      "context": {
+        "currency": "@sys-currency"
+      },
+      "metadata": {},
+      "conditions": "@sys-currency",
+      "event_name": "input",
+      "dialog_node": "handler_12_1517333393265"
+    },
+    {
+      "type": "event_handler",
+      "output": {
+        "text": {
+          "values": [
+            "Mas qual será o preço? (dica: coloca o \"R$\" ou escreve \"reais\")"
+          ],
+          "selection_policy": "sequential"
+        }
+      },
+      "parent": "slot_91_1516736365479",
+      "metadata": {},
+      "event_name": "nomatch",
+      "dialog_node": "handler_97_1516736738477",
+      "previous_sibling": "handler_92_1516736365479"
+    },
+    {
+      "type": "event_handler",
+      "output": {},
+      "parent": "slot_91_1516736365479",
+      "context": {
+        "preco": "@sys-currency"
+      },
+      "metadata": {},
+      "conditions": "@sys-currency",
+      "event_name": "input",
+      "dialog_node": "handler_92_1516736365479",
+      "previous_sibling": "handler_93_1516736365479"
+    },
+    {
+      "type": "event_handler",
+      "output": {
+        "text": "Faltou o preço, pode me informar?"
+      },
+      "parent": "slot_91_1516736365479",
+      "metadata": {},
+      "event_name": "focus",
+      "dialog_node": "handler_93_1516736365479"
+    },
+    {
+      "type": "slot",
+      "output": {},
+      "parent": "node_2_1517332284357",
+      "metadata": {},
+      "variable": "$currency",
+      "dialog_node": "slot_11_1517333393265",
+      "previous_sibling": "slot_6_1517333346770"
+    },
+    {
+      "type": "standard",
+      "title": "Positivo",
+      "output": {
+        "text": {
+          "values": [
+            "Beleza, já estou enviando...",
+            "Deixa comigo!",
+            "Tô mandando !!!!"
+          ],
+          "selection_policy": "sequential"
+        },
+        "action": "cadastrar_preco_normal"
+      },
+      "parent": "node_2_1517332284357",
+      "metadata": {},
+      "next_step": {
+        "behavior": "jump_to",
+        "selector": "body",
+        "dialog_node": "node_20_1516987320514"
+      },
+      "conditions": "#positivo",
+      "dialog_node": "node_4_1517333184707",
+      "previous_sibling": "node_5_1517333192498"
+    },
+    {
+      "type": "standard",
+      "title": "Negativo",
+      "output": {
+        "text": {
+          "values": [
+            "Ok, não iremos alterar!"
+          ],
+          "selection_policy": "sequential"
+        }
+      },
+      "parent": "node_2_1517332284357",
+      "metadata": {},
+      "next_step": {
+        "behavior": "jump_to",
+        "selector": "body",
+        "dialog_node": "node_20_1516987320514"
+      },
+      "conditions": "#negativo",
+      "dialog_node": "node_5_1517333192498",
+      "previous_sibling": "slot_11_1517333393265"
+    },
+    {
+      "type": "standard",
+      "title": "Não entendeu",
+      "output": {
+        "text": {
+          "values": [
+            "Não entendi qual o item, poderia informar novamente?"
+          ],
+          "selection_policy": "sequential"
+        }
+      },
+      "parent": "node_2_1517332284357",
+      "metadata": {},
+      "next_step": {
+        "behavior": "jump_to",
+        "selector": "user_input",
+        "dialog_node": "node_2_1517332284357"
+      },
+      "conditions": "anything_else",
+      "dialog_node": "node_21_1517334782193",
+      "previous_sibling": "node_4_1517333184707"
+    },
+    {
+      "type": "slot",
+      "output": {},
+      "parent": "node_2_1517332284357",
+      "metadata": {},
+      "variable": "$Itens_Dpto",
+      "dialog_node": "slot_6_1517333346770"
+    },
+    {
+      "type": "event_handler",
+      "output": {},
+      "parent": "slot_15_1516986907374",
+      "event_name": "focus",
+      "dialog_node": "handler_17_1516986907374",
+      "previous_sibling": "handler_16_1516986907374"
+    },
+    {
+      "type": "event_handler",
+      "parent": "slot_15_1516986907374",
+      "event_name": "input",
+      "dialog_node": "handler_16_1516986907374"
+    },
+    {
+      "type": "response_condition",
+      "output": {
+        "text": {
+          "values": [
+            "Beleza, eu vou enviar o item $item com o preço de R$ $preco para todas as lojas. Posso enviar ao SAP?"
+          ],
+          "selection_policy": "sequential"
+        }
+      },
+      "parent": "node_83_1516736060603",
+      "disabled": true,
+      "metadata": {},
+      "dialog_node": "node_29_1516989436896",
+      "previous_sibling": "node_5_1516985690196"
+    },
+    {
+      "type": "slot",
+      "output": {},
+      "parent": "node_83_1516736060603",
+      "metadata": {},
+      "variable": "$preco",
+      "dialog_node": "slot_91_1516736365479",
+      "previous_sibling": "slot_85_1516736089194"
+    },
+    {
+      "type": "frame",
+      "title": "confirmar",
+      "output": {
+        "text": {
+          "values": [
+            "Beleza, já estou enviando...",
+            "Deixa comigo!",
+            "Tô mandando !!!!"
+          ],
+          "selection_policy": "sequential"
+        },
+        "action": "cadastrar_preco_normal"
+      },
+      "parent": "node_83_1516736060603",
+      "metadata": {
+        "fallback": "leave"
+      },
+      "next_step": {
+        "behavior": "jump_to",
+        "selector": "body",
+        "dialog_node": "node_20_1516987320514"
+      },
+      "conditions": "#positivo",
+      "dialog_node": "node_3_1516985034661",
+      "digress_out": "allow_all",
+      "previous_sibling": "handler_28_1516989436204",
+      "digress_out_slots": "not_allowed"
+    },
+    {
+      "type": "slot",
+      "output": {},
+      "parent": "node_83_1516736060603",
+      "metadata": {},
+      "variable": "$item",
+      "dialog_node": "slot_85_1516736089194",
+      "previous_sibling": "node_29_1516989436896"
+    },
+    {
+      "type": "event_handler",
+      "output": {},
+      "parent": "node_83_1516736060603",
+      "disabled": true,
+      "metadata": {},
+      "event_name": "focus",
+      "dialog_node": "handler_84_1516736089189",
+      "previous_sibling": "slot_91_1516736365479"
+    },
+    {
+      "type": "standard",
+      "output": {
+        "text": {
+          "values": [
+            "Beleza, então me passa os dados de novo?",
+            "Ok, vamos repetir então, me diz o código SAP e o preço do item..."
+          ],
+          "selection_policy": "random"
+        }
+      },
+      "parent": "node_83_1516736060603",
+      "context": {
+        "item": null,
+        "preco": null
+      },
+      "metadata": {
+        "fallback": "leave"
+      },
+      "next_step": {
+        "behavior": "jump_to",
+        "selector": "user_input",
+        "dialog_node": "node_83_1516736060603"
+      },
+      "conditions": "#negativo",
+      "dialog_node": "node_5_1516985690196",
+      "digress_out": "allow_all",
+      "previous_sibling": "node_3_1516985034661"
+    },
+    {
+      "type": "event_handler",
+      "output": {},
+      "parent": "node_83_1516736060603",
+      "disabled": true,
+      "metadata": {},
+      "event_name": "focus",
+      "dialog_node": "handler_28_1516989436204"
+    },
+    {
+      "type": "slot",
+      "output": {},
+      "parent": "node_3_1516985034661",
+      "metadata": {},
+      "variable": "$preco",
+      "dialog_node": "slot_10_1516986465422",
+      "previous_sibling": "slot_7_1516986440585"
+    },
+    {
+      "type": "slot",
+      "output": {},
+      "parent": "node_3_1516985034661",
+      "metadata": {},
+      "variable": "$item",
+      "dialog_node": "slot_7_1516986440585"
+    },
+    {
+      "type": "standard",
+      "output": {
+        "text": {
+          "values": [
+            "Oi tudo bom? No que posso te ajudar?"
+          ],
+          "selection_policy": "sequential"
+        }
+      },
+      "metadata": {},
+      "conditions": "#oi",
+      "digress_in": "does_not_return",
+      "dialog_node": "node_2_1517413256879",
+      "previous_sibling": "node_20_1516987320514"
+    },
+    {
+      "type": "frame",
+      "title": "Troca preço com item e valor",
+      "output": {
+        "text": {
+          "values": [
+            "Ok! Então você quer alterar o preço normal do item $Itens_Dpto para R$ $currency para todas as lojas?"
+          ],
+          "selection_policy": "sequential"
+        }
+      },
+      "metadata": {
+        "fallback": "leave"
+      },
+      "conditions": "#mudar_preço_normal && @Itens_Dpto && @sys-currency",
+      "digress_in": "does_not_return",
+      "dialog_node": "node_2_1517332284357",
+      "digress_out": "allow_all",
+      "previous_sibling": "Bem-vindo",
+      "digress_out_slots": "not_allowed"
+    },
+    {
+      "type": "standard",
+      "title": "Em outros casos",
+      "output": {
+        "text": {
+          "values": [
+            "Poxa, não entendi o que você quis dizer, tenta de novo...",
+            "ihhhh... não entendi, me explica de novo?",
+            "Quebra uma para mim? Me explica o que exatamente vc quer fazer?"
+          ],
+          "selection_policy": "random"
+        }
+      },
+      "metadata": {},
+      "conditions": "anything_else",
+      "dialog_node": "Em outros casos",
+      "previous_sibling": "node_5_1517418384396"
+    },
+    {
+      "type": "standard",
+      "title": "Encerrando",
+      "output": {
+        "text": {
+          "values": [
+            "Tudo bem! Estou sempre a disposição!"
+          ],
+          "selection_policy": "sequential"
+        }
+      },
+      "metadata": {},
+      "conditions": "#negativo",
+      "digress_in": "does_not_return",
+      "dialog_node": "node_1_1517412182289",
+      "previous_sibling": "node_50_1516732001575"
+    },
+    {
+      "type": "standard",
+      "title": "Ping",
+      "output": {
+        "text": {
+          "values": [
+            "Pong!"
+          ],
+          "selection_policy": "sequential"
+        }
+      },
+      "metadata": {},
+      "conditions": "#ping",
+      "dialog_node": "node_3_1517416759334",
+      "previous_sibling": "node_1_1517413742680"
+    },
+    {
+      "type": "standard",
+      "title": "Perguntar sobre item e preço",
+      "output": {
+        "text": {
+          "values": [
+            "Beleza, me diz qual item e o preço você gostaria de alterar?"
+          ],
+          "selection_policy": "sequential"
+        }
+      },
+      "metadata": {
+        "fallback": "leave"
+      },
+      "conditions": "#mudar_preço_normal",
+      "digress_in": "does_not_return",
+      "dialog_node": "node_50_1516732001575",
+      "digress_out": "allow_all",
+      "previous_sibling": "node_2_1517332284357"
+    },
+    {
+      "type": "standard",
+      "title": "xingamento",
+      "output": {
+        "text": {
+          "values": [
+            "Por que os humanos são tão rudes?",
+            "🙄 Acho que não era bem isso que queria dizer...",
+            "Tente outra vez..."
+          ],
+          "selection_policy": "random"
+        }
+      },
+      "metadata": {},
+      "conditions": "#xingamento",
+      "dialog_node": "node_1_1517413742680",
+      "previous_sibling": "node_2_1517413256879"
+    },
+    {
+      "type": "standard",
+      "title": "Quem",
+      "output": {
+        "text": {
+          "values": [
+            "Eu sou um assitente virtual criado para auxiliar você no seu trabalho, onde e quando você precisar! Vamos começar?",
+            "Eu sou um robô, e estou aqui pra te ajudar no que você precisar!"
+          ],
+          "selection_policy": "sequential"
+        }
+      },
+      "metadata": {},
+      "conditions": "#quem",
+      "dialog_node": "node_5_1517418384396",
+      "previous_sibling": "node_4_1517416953984"
+    },
+    {
+      "type": "standard",
+      "title": "teste",
+      "output": {
+        "text": {
+          "values": [
+            "Está funcionando! 👍",
+            "Testado! 👍",
+            "Tudo ok! 👍",
+            "Funcionando! 👍"
+          ],
+          "selection_policy": "sequential"
+        }
+      },
+      "metadata": {},
+      "conditions": "#teste",
+      "dialog_node": "node_4_1517416953984",
+      "previous_sibling": "node_3_1517416759334"
+    },
+    {
+      "type": "standard",
+      "title": "Começar de novo",
+      "output": {
+        "text": {
+          "values": [
+            "O que eu posso fazer agora por você?",
+            "Mais alguma coisa?",
+            "E agora quer fazer o quê?",
+            "No que mais posso te ajudar?"
+          ],
+          "selection_policy": "random"
+        }
+      },
+      "metadata": {},
+      "dialog_node": "node_20_1516987320514",
+      "previous_sibling": "node_1_1517412182289"
+    },
+    {
+      "type": "standard",
+      "title": "Bem-vindo",
+      "output": {
+        "text": {
+          "values": [
+            "Tudo bem, como eu posso te ajudar hoje?",
+            "Olá, me diz o que você precisa fazer...",
+            "Oi, tudo bem ? Me diz o que eu faço para te ajudar...",
+            "Oi, me fala o que você está precisando...",
+            "Olá! Para o que precisa de mim hoje?"
+          ],
+          "selection_policy": "random"
+        }
+      },
+      "metadata": {},
+      "conditions": "welcome",
+      "dialog_node": "Bem-vindo"
+    }
+  ],
+  "workspace_id": "396862e1-a36e-4dd7-aa01-6f26ca753e67",
+  "counterexamples": [
+    {
+      "text": "preço fora do normal"
+    },
+    {
+      "text": "quero explodir o preço normal"
+    }
+  ],
+  "learning_opt_out": false
+}
