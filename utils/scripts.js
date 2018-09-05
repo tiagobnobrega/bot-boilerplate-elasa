@@ -79,7 +79,7 @@ const resolveSapCode = (message, context) => {
 const actionRequestMessageMapper = {
     'UNKNOWN': m => ({type: 'error', text: `Um erro inesperado ocorreu ao processar o arquivo: ${m.code}`}),
     '100': m => ({type: 'success', text: 'Os itens foram enviados para processamento com sucesso'}),
-    '101': m => ({type: 'success', text: 'Os itens foram parcialmente enviados para processamento'}),
+    '101': m => ({type: 'success', text: 'Consegui enviar alguns itens com sucesso.'}),
     '200': m => ({type: 'error', text: 'Ocorreu um erro no servidor'}),
     '201': m => ({
         type: 'error',

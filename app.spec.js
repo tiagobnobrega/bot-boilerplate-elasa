@@ -90,13 +90,34 @@ describe('Testes integrados do bot', () => {
             });
         });
 
+        test('mensagem envio de arquivo após mensagem inicial deve retornar validação do arquivo', async () => {
+            await postTextMessage('##start_conversation@@');
+            const postedFile = {
+                "action": "normal_price.more_info",
+                "messages": [
+                    {
+                        "code": 100,
+                        "text": "sucesso!"
+                    }
+                ]
+            };
+
+            const {replies} = await postActionMessage(postedFile);
+            expect(replies).toHaveLength(1);
+
+            expect(replies[0]).toMatchObject({
+                "type": "action",
+                "payload": {
+                    "action": "normal_price.send_file",
+                    "content": expect.any(String)
+                }
+            });
+        });
+
         test('mensagem "vamos lá" no contexto raiz deve informar uma alteração de preço', async () => {
             const {replies} = await postTextMessage('vamos lá');
             expect(replies).toHaveLength(2);
-            expect(replies[0]).toMatchObject({
-                "payload": "Posso realizar a alteração de preço normal. É só me dizer o item e o preço ou baixar este arquivo aqui e me enviar de volta",
-                "type": "text"
-            });
+            expect(replies[0]).toMatchObject({"payload": "Para alterar o preço normal é só me dizer o item e o preço, ou baixar este arquivo aqui e me enviar de volta", "type": "text"});
             expect(replies[1]).toMatchObject({"payload": {"action": "normal_price.more_info"}, "type": "action"});
         });
 
@@ -126,6 +147,7 @@ describe('Testes integrados do bot', () => {
     });
 
     describe('Alteração de preço em massa', () => {
+
         test('mudar preço normal em massa', async () => {
             const {replies} = await postTextMessage('mudar preço normal em massa');
             expect(replies).toHaveLength(2);
@@ -311,6 +333,73 @@ describe('Testes integrados do bot', () => {
                 }
             });
         });
+
+        test('cancelar mudar preço normal em massa', async () => {
+            await postTextMessage('mudar preço normal em massa');
+            const {replies} = await postTextMessage('mudei de ideia');
+            expect(replies).toHaveLength(1);
+            expect(replies[0]).toMatchObject({"payload": "Ok. Sem problemas. Estou aqui se precisar de mais alguma coisa.", "type": "text"});
+        });
+
+        test('repetir operacao após envio de arquivo mudar preço normal em massa', async () => {
+            await postTextMessage('mudar preço normal em massa');
+            const postedFile = {
+                "action": "normal_price.more_info",
+                "messages": [
+                    {
+                        "code": 200,
+                        "text": "erro no servidor"
+                    },
+                    {
+                        "code": 201,
+                        "text": "formato de arquivo inválido",
+                        "context": {
+                            "format": "pdf",
+                            "expected": "xls,xlsx"
+                        }
+                    },
+                    {
+                        "code": 202,
+                        "text": "não é possível enviar preço normal após as 19h30",
+                        "context": {
+                            "timelimit": "19:30:00"
+                        }
+                    },
+                    {
+                        "code": 300,
+                        "text": "não foi possível processar o arquivo"
+                    },
+                    {
+                        "code": 301,
+                        "text": "o item 123, na linha 456 não foi encontrado na base",
+                        "context": {
+                            "item": 123,
+                            "line": 456
+                        }
+                    },
+                    {
+                        "code": 302,
+                        "text": "o item 321, na linha 654, com departamento 987 não foi importado porque o usuario não tem permissão neste departamento",
+                        "context": {
+                            "item": 321,
+                            "line": 654,
+                            "department": 987
+                        }
+                    }
+                ]
+            };
+
+            await postActionMessage(postedFile);
+            const {replies} = await postTextMessage('quero fazer de novo');
+
+            expect(replies[0]).toMatchObject({
+                "type": "action",
+                "payload": {
+                    "action": "normal_price.more_info",
+                    "content": expect.any(String)
+                }
+            });
+        });
     });
 
     describe('Alteração de preço normal', () => {
@@ -481,7 +570,7 @@ describe('Testes integrados do bot', () => {
         test('Alteração preço sem tipo', async () => {
             const {replies} = await postTextMessage('alterar preço');
             expect(replies).toHaveLength(2);
-            expect(replies[0]).toMatchObject({"payload": "Posso realizar a alteração de preço normal. É só me dizer o item e o preço ou baixar este arquivo aqui e me enviar de volta", "type": "text"});
+            expect(replies[0]).toMatchObject({"payload": "Para alterar o preço normal é só me dizer o item e o preço, ou baixar este arquivo aqui e me enviar de volta", "type": "text"});
             expect(replies[1]).toMatchObject({"payload": {"action": "normal_price.more_info"}, "type": "action"});
         });
     });
