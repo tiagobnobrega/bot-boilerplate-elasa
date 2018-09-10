@@ -3,12 +3,12 @@ require('dotenv').config();
 const chalk = require('chalk');
 
 // LOCAL
-const PORT = process.env.PORT || 80;
-const BASE_URL = 'http://localhost';
+// const PORT = process.env.PORT || 80;
+// const BASE_URL = 'http://localhost';
 
 //EXTERNO
-// const PORT = 80;
-// const BASE_URL = 'https://elasa-chatbot.mybluemix.net';
+const PORT = 80;
+const BASE_URL = 'https://elasa-chatbot.mybluemix.net';
 
 const axiosClient = axios.create({
     baseURL: `${BASE_URL}${PORT && PORT !== 80 ? ':' + PORT : ''}`,
@@ -16,7 +16,7 @@ const axiosClient = axios.create({
     // headers: {'X-Custom-Header': 'foobar'}
 });
 
-jest.setTimeout(15000);
+jest.setTimeout(20000);
 
 const buildNewSession = () => ({
     conversationId: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
@@ -400,6 +400,66 @@ describe('Testes integrados do bot', () => {
                 }
             });
         });
+
+        test('solicitar alteracao em massa após envio de arquivo mudar preço normal em massa', async () => {
+            await postTextMessage('mudar preço normal em massa');
+            const postedFile = {
+                "action": "normal_price.more_info",
+                "messages": [
+                    {
+                        "code": 200,
+                        "text": "erro no servidor"
+                    },
+                    {
+                        "code": 201,
+                        "text": "formato de arquivo inválido",
+                        "context": {
+                            "format": "pdf",
+                            "expected": "xls,xlsx"
+                        }
+                    },
+                    {
+                        "code": 202,
+                        "text": "não é possível enviar preço normal após as 19h30",
+                        "context": {
+                            "timelimit": "19:30:00"
+                        }
+                    },
+                    {
+                        "code": 300,
+                        "text": "não foi possível processar o arquivo"
+                    },
+                    {
+                        "code": 301,
+                        "text": "o item 123, na linha 456 não foi encontrado na base",
+                        "context": {
+                            "item": 123,
+                            "line": 456
+                        }
+                    },
+                    {
+                        "code": 302,
+                        "text": "o item 321, na linha 654, com departamento 987 não foi importado porque o usuario não tem permissão neste departamento",
+                        "context": {
+                            "item": 321,
+                            "line": 654,
+                            "department": 987
+                        }
+                    }
+                ]
+            };
+
+            await postActionMessage(postedFile);
+            const {replies} = await postTextMessage('alterar em massa');
+
+            expect(replies[0]).toMatchObject({
+                "type": "action",
+                "payload": {
+                    "action": "normal_price.more_info",
+                    "content": expect.any(String)
+                }
+            });
+        });
     });
 
     describe('Alteração de preço normal', () => {
@@ -457,7 +517,7 @@ describe('Testes integrados do bot', () => {
         });
 
         test('mudar preço normal passando valor e código SAP', async () => {
-            const {replies} = await postTextMessage('mudar preço normal um item para 20 reais de sap 2134567');
+            const {replies} = await postTextMessage('mudar preço normal um item para 3,99 reais de sap 2171545');
             expect(replies).toHaveLength(2);
             expect(replies[0]).toMatchObject({"payload": "Tudo bem. Vamos prosseguir com a alteração de preço normal.", "type": "text"});
             expect(replies[1]).toMatchObject({
@@ -465,7 +525,22 @@ describe('Testes integrados do bot', () => {
                 "payload": {
                     "action": "normal_price.validate",
                     "context": {
-                        "itemSapCode": "000000000002134567"
+                        "itemSapCode": "000000000002171545"
+                    }
+                }
+            });
+        });
+
+        test('mudar preço normal passando valor e código SAP após mensagem inicial', async () => {
+            await postTextMessage('@@start_conversation##');
+            const {replies} = await postTextMessage('quero alerar o item 2171545 para 3,99');
+            expect(replies).toHaveLength(1);
+            expect(replies[0]).toMatchObject({
+                "type": "action",
+                "payload": {
+                    "action": "normal_price.validate",
+                    "context": {
+                        "itemSapCode": "000000000002171545"
                     }
                 }
             });
