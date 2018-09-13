@@ -140,9 +140,8 @@ const handleFileValidation = ({
                                   invalidActionMesssage = "Infelizmente não sou capaz de processar este tipo de ação."
                               }) => {
 
-    if (userInputData.action !== 'normal_price.more_info') {
+    if (userInputData.action !== 'normal_price.file_validation') {
         return {
-            context: {},
             reply: {type: "text", content: invalidActionMesssage + ". action=" + userInputData.action}
         };
     }
