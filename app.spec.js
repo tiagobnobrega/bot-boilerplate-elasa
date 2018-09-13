@@ -3,12 +3,12 @@ require('dotenv').config();
 const chalk = require('chalk');
 
 // LOCAL
-// const PORT = process.env.PORT || 80;
-// const BASE_URL = 'http://localhost';
+const PORT = process.env.PORT || 80;
+const BASE_URL = 'http://localhost';
 
 //EXTERNO
-const PORT = 80;
-const BASE_URL = 'https://elasa-chatbot.mybluemix.net';
+// const PORT = 80;
+// const BASE_URL = 'https://elasa-chatbot.mybluemix.net';
 
 const axiosClient = axios.create({
     baseURL: `${BASE_URL}${PORT && PORT !== 80 ? ':' + PORT : ''}`,
@@ -44,10 +44,11 @@ const postActionMessage = async ({action, messages}) => {
 };
 
 let SESSION_INFO = buildNewSession();
-
-beforeEach(() => {
+const beforeEachFunction = () => {
     SESSION_INFO = buildNewSession();
-});
+};
+
+beforeEach(beforeEachFunction);
 
 
 const expectFileMessageTypeEnum = m => {
@@ -57,6 +58,52 @@ const expectFileMessageTypeEnum = m => {
 console.info(chalk.black.bgBlue("Don't forget to start local server with 'yarn start' command."));
 console.info(chalk.black.bgYellow.bold("Estes são testes integrados, seu funcionamento depende do conteúdo das respostas cadastradas no fluxo de dialogos e treinamento de intenções e entidades."));
 console.info(chalk.black.bgYellow.bold("Alterações no fluxo devem ser refletidas nos testes para o sucesso de sua execução"));
+
+/**
+ * Estas intenções devem ser respondidas por fallback em alguns contextos.
+ * Por isto os testes são definidos aqui
+ */
+const simpleIntentsTests = {
+    'como_lais_esta': async ()=>{
+        const {replies} = await postTextMessage('como você está ?');
+        expect(replies[0]).toMatchObject({
+            "type": "text",
+            "payload": "Estou bem. Obrigada por perguntar. Como posso te ajudar hoje?"
+        });
+    },
+    //,"","funcao_lais",
+    //     "idade_lais"
+    'quem_e_lais': async ()=>{
+        const {replies} = await postTextMessage('Qual o seu nome ?');
+        expect(replies[0]).toMatchObject({
+            "type": "text",
+            "payload": "Meu nome é Laís. Se eu puder ajudar em alguma coisa, por favor, me avise."
+        });
+    },
+    'funcao_lais': async ()=>{
+        const {replies} = await postTextMessage('O que voce faz ?');
+        expect(replies[0]).toMatchObject({
+            "type": "text",
+            "payload": "Por enquanto só consigo te ajudar com o preço normal, prometo que em breve vou te ajudar com mais coisas!"
+        });
+    },
+    'idade_lais': async ()=>{
+        const {replies} = await postTextMessage('quantos anos você tem ?');
+        expect(replies[0]).toMatchObject({
+            "type": "text",
+            "payload": "Então, é complicado falar sobre minha idade, pois o tempo não passa para mim 😉."
+        });
+    },
+};
+
+const runTestsAfter = (testObj={'testObjNotDefined':()=>expect.assertions(1)},initialFn) =>{
+    Object.entries(testObj).forEach(([testName,testFn])=>{
+        test(testName, async ()=>{
+            await Promise.resolve(initialFn());
+            await testFn();
+        });
+    });
+};
 
 
 describe('Testes integrados do bot', () => {
@@ -450,7 +497,7 @@ describe('Testes integrados do bot', () => {
             };
 
             await postActionMessage(postedFile);
-            const {replies} = await postTextMessage('alterar em massa');
+            const {replies} = await postTextMessage('enviar em massa');
 
             expect(replies[0]).toMatchObject({
                 "type": "action",
@@ -650,5 +697,14 @@ describe('Testes integrados do bot', () => {
         });
     });
 
+    describe('Outras intenções simples',() =>{
+        describe('@ ROOT_CONTEXT',()=>runTestsAfter(simpleIntentsTests, beforeEachFunction));
+
+        describe('after start_conversation',()=> {
+            runTestsAfter(simpleIntentsTests, async () => {
+                await postTextMessage('##start_conversation@@');
+            })
+        });
+    })
 
 });
