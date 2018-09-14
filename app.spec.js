@@ -3,12 +3,12 @@ require('dotenv').config();
 const chalk = require('chalk');
 
 // LOCAL
-const PORT = process.env.PORT || 80;
-const BASE_URL = 'http://localhost';
+// const PORT = process.env.PORT || 80;
+// const BASE_URL = 'http://localhost';
 
 //EXTERNO
-// const PORT = 80;
-// const BASE_URL = 'https://elasa-chatbot.mybluemix.net';
+const PORT = 80;
+const BASE_URL = 'https://elasa-chatbot.mybluemix.net';
 
 const axiosClient = axios.create({
     baseURL: `${BASE_URL}${PORT && PORT !== 80 ? ':' + PORT : ''}`,
@@ -94,6 +94,40 @@ const simpleIntentsTests = {
             "payload": "Então, é complicado falar sobre minha idade, pois o tempo não passa para mim 😉."
         });
     },
+    'pode_ajudar': async ()=>{
+        const {replies} = await postTextMessage('como você pode me ajudar ?');
+        expect(replies[0]).toMatchObject({
+            "type": "text",
+            "payload": "Eu faço alteração de preço normal item a item ou em massa. "
+        });
+    },
+    'pode_ajudar & positivo': async ()=>{
+        await postTextMessage('como você pode me ajudar ?');
+        const {replies} = await postTextMessage('entendi');
+        expect(replies[0]).toMatchObject({
+            "type": "text",
+            "payload": "Se precisar de algo mais, estou aqui."
+        });
+    },
+    'mudar preço promocional': async ()=>{
+        const {replies} = await postTextMessage('quero alterar o preco promocional de um item');
+        expect(replies).toHaveLength(3);
+        expect(replies[0]).toMatchObject({
+            "type": "text",
+            "payload": "Desculpe, ainda não realizo alteração de preço promocional, apenas de preço normal."
+        });
+        expect(replies[1]).toMatchObject({
+            "type": "text",
+            "payload": "Para alterar o preço normal é só me dizer o item e o preço, ou baixar este arquivo aqui e me enviar de volta"
+        });
+
+        expect(replies[2]).toMatchObject({
+            "type": "action",
+            "payload": {action: "normal_price.more_info" }
+        });
+
+
+    },
 };
 
 const runTestsAfter = (testObj={'testObjNotDefined':()=>expect.assertions(1)},initialFn) =>{
@@ -140,7 +174,7 @@ describe('Testes integrados do bot', () => {
         test('mensagem envio de arquivo após mensagem inicial deve retornar validação do arquivo', async () => {
             await postTextMessage('##start_conversation@@');
             const postedFile = {
-                "action": "normal_price.more_info",
+                "action": "normal_price.file_validation",
                 "messages": [
                     {
                         "code": 100,
@@ -210,7 +244,7 @@ describe('Testes integrados do bot', () => {
 
         test('mensagem tipo "action/normal_price.more_info" no contexto raiz com ERROS', async () => {
             const postedFile = {
-                "action": "normal_price.more_info",
+                "action": "normal_price.file_validation",
                 "messages": [
                     {
                         "code": 200,
@@ -275,7 +309,7 @@ describe('Testes integrados do bot', () => {
 
         test('mensagem tipo "action/normal_price.more_info" no contexto raiz com SUCESSO (100)', async () => {
             const postedFile = {
-                "action": "normal_price.more_info",
+                "action": "normal_price.file_validation",
                 "messages": [
                     {
                         "code": 100,
@@ -298,7 +332,7 @@ describe('Testes integrados do bot', () => {
 
         test('mensagem tipo "action/normal_price.more_info" no contexto raiz com SUCESSO (304)', async () => {
             const postedFile = {
-                "action": "normal_price.more_info",
+                "action": "normal_price.file_validation",
                 "messages": [
                     {
                         "code": 304,
@@ -321,7 +355,7 @@ describe('Testes integrados do bot', () => {
 
         test('mensagem tipo "action/normal_price.more_info" no contexto raiz com SUCESSO (303)', async () => {
             const postedFile = {
-                "action": "normal_price.more_info",
+                "action": "normal_price.file_validation",
                 "messages": [
                     {
                         "code": 303,
@@ -344,7 +378,7 @@ describe('Testes integrados do bot', () => {
 
         test('mensagem tipo "action/normal_price.more_info" no contexto raiz com SUCESSO PARCIAL', async () => {
             const postedFile = {
-                "action": "normal_price.more_info",
+                "action": "normal_price.file_validation",
                 "messages": [
                     {
                         "code": 101,
