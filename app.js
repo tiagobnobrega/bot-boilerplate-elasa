@@ -124,8 +124,7 @@ const chatMessagePost = async (req, res) => {
         if (messageText) {
             // Call laisClient. talk to get user message intents & entities
             aiResponse = await laisClient.talk(conversationId, messageText);
-        }
-        ;
+        };
 
         context.userInputType = type;
         context.userInputData = messageData;
@@ -218,7 +217,7 @@ const setupServer = async server => {
 
         console.log(startChalk('Loading awesome LAIS Dialog...'));
         // Load Dialogs & Rules & startUpdater
-        dialogEngine = await lais.DialogRemote({updateInterval: 5, logLevel: 'TRACE'});
+        dialogEngine = await lais.DialogRemote({updateInterval: 5, logLevel: 'TRACE', scripts});
 
         console.log(startChalk('Configuring chat message post handler... '));
         server.post('/api/raw', [bodyParser.json(), wrapAsync(chatMessagePost)]);

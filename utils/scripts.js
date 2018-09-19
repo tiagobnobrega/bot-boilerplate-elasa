@@ -211,6 +211,16 @@ const handlePriceValidationMessage = ({userInputData = {}, messageMapper = {}, i
 
 };
 
+const saveLastAction = (context, omitValues=[]) =>{
+    const { intents, entities } = context;
+    return {...context, _safe: {...context._safe, lastActionContext: _.omit({ intents, entities }, omitValues )}}
+};
+
+const loadLastAction = (context)=>{
+    const { intents = [], entities = {} } = context._safe && context._safe.lastActionContext;
+    return {...context, intents, entities};
+}
+
 module.exports = {
-    resolveCurrency, resolveSapCode, handleFileValidation, handlePriceValidationMessage
+    resolveCurrency, resolveSapCode, handleFileValidation, handlePriceValidationMessage, saveLastAction, loadLastAction
 };

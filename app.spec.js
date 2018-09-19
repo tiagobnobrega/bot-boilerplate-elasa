@@ -3,12 +3,12 @@ require('dotenv').config();
 const chalk = require('chalk');
 
 // LOCAL
-// const PORT = process.env.PORT || 80;
-// const BASE_URL = 'http://localhost';
+const PORT = process.env.PORT || 80;
+const BASE_URL = 'http://localhost';
 
 //EXTERNO
-const PORT = 80;
-const BASE_URL = 'https://elasa-chatbot.mybluemix.net';
+// const PORT = 80;
+// const BASE_URL = 'https://elasa-chatbot.mybluemix.net';
 
 const axiosClient = axios.create({
     baseURL: `${BASE_URL}${PORT && PORT !== 80 ? ':' + PORT : ''}`,
@@ -422,6 +422,16 @@ describe('Testes integrados do bot', () => {
             expect(replies[0]).toMatchObject({"payload": "Ok. Sem problemas. Estou aqui se precisar de mais alguma coisa.", "type": "text"});
         });
 
+        test('cancelar mudar preço normal em massa, dizer obrigado e repetir operação', async () => {
+            await postTextMessage('mudar preço normal em massa');
+            await postTextMessage('obrigado');
+            const {replies} =  await postTextMessage('Podemos tentar de novo ?');
+
+            expect(replies).toHaveLength(2);
+            expect(replies[0]).toMatchObject({"payload": "Tudo bem. Vamos prosseguir com a alteração de preço normal.", "type": "text"});
+            expect(replies[1]).toMatchObject({"payload": {"action": "normal_price.more_info", "content": "Vamos fazer assim, preenche esse modelo e me manda."}, "type": "action"});
+        });
+
         test('repetir operacao após envio de arquivo mudar preço normal em massa', async () => {
             await postTextMessage('mudar preço normal em massa');
             const postedFile = {
@@ -699,6 +709,33 @@ describe('Testes integrados do bot', () => {
                 }
             });
         });
+
+        test('confirmação POSITIVA de mudar preço normal, seguida de repetir operação', async () => {
+            // isto deve definir a conversa para o dialogo correto
+            await postTextMessage('mudar preço normal um item para 20,99 reais de sap 2131514');
+            await postActionMessage({
+                "action": "normal_price.validation",
+                "messages": [
+                    {
+                        "code": 100,
+                        "text": "sucesso!"
+                    }
+                ]
+            });
+            await postTextMessage('sim');
+
+            const { replies } = await postTextMessage('Quero tentar de novo');
+            expect(replies).toHaveLength(2);
+            expect(replies[0]).toMatchObject({
+                "payload": "🤔 Desculpe, não tenho certeza se entendi. Acredito que você está querendo realizar uma alteração de preço normal.",
+                "type": "text"
+            });
+            expect(replies[1]).toMatchObject({
+                "payload": "Pode me informar, por favor, o valor do novo preço e o código SAP do item?",
+                "type": "text"
+            });
+        });
+
 
         test('confirmação NEGATIVA de mudar preço normal', async () => {
             // isto deve definir a conversa para o dialogo correto

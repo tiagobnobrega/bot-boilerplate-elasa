@@ -14,10 +14,12 @@ let LaisDialog = function(initArgs) {
   let me = {};
   let rules = [];
   let dialogs = [];
+  let scripts = {};
   let REPEAT_OVERFLOW = 30;
   let logLevel = LOG_LEVEL.INFO;
   let PROTECTED_ATTRIBUTES = ["_dialog", "lastRules", "repeatCount",
     "__created", "userMessage", "lastMessageTime"];
+  let SAFE_ATTRIBUTE = '_safe';
 
   function init() {
     if(!initArgs) {
@@ -26,6 +28,7 @@ let LaisDialog = function(initArgs) {
 
     rules = RuleFunctionCompiler.compile(initArgs.rules);
     dialogs = initArgs.dialogs;
+    scripts = initArgs.scripts;
     logLevel = (initArgs.logLevel && LOG_LEVEL[initArgs.logLevel]) || logLevel;
   }
 
@@ -236,12 +239,19 @@ let LaisDialog = function(initArgs) {
 
   let applyAction = function(action, context) {
     let protectedAttributes = getProtectedAttributes(context);
+    let safeAttributes = _.pick(context,SAFE_ATTRIBUTE)[SAFE_ATTRIBUTE];
     context = setContext(action, _.cloneDeep(context));
 
     // Não estou usando o _.merge porque usando ele está gerando um bug
     // aonde o conteúdo do dialogs é modificado.
     for(property in protectedAttributes) {
       context[property] = protectedAttributes[property]
+    }
+
+    for(p in safeAttributes){
+        if(_.isNil(_.get(context,`${SAFE_ATTRIBUTE}.${p}`))){
+            _.set(context,`${SAFE_ATTRIBUTE}.${p}`,safeAttributes[p]);
+        }
     }
 
     context = setDialog(action, context);
@@ -251,7 +261,7 @@ let LaisDialog = function(initArgs) {
 
   let setContext = function(action, context) {
     if(action.setContext && _.isFunction(action.setContext)) {
-      let newContextAsPlainObject = action.setContext(context.asPlainObject());
+      let newContextAsPlainObject = action.setContext(context.asPlainObject(), scripts);
       _.merge(newContextAsPlainObject, { userId: context.userId });
       context = new Context(newContextAsPlainObject);
     }
