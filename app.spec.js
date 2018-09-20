@@ -2,21 +2,40 @@ const axios = require('axios');
 require('dotenv').config();
 const chalk = require('chalk');
 
-// LOCAL
-const PORT = process.env.PORT || 80;
-const BASE_URL = 'http://localhost';
 
-//EXTERNO
-// const PORT = 80;
-// const BASE_URL = 'https://elasa-chatbot.mybluemix.net';
+const envMap = {
+    'LOCAL':{
+        PORT: process.env.PORT || 80,
+        BASE_URL: 'http://localhost',
+        AXIOS_TIMEOUT: 10000,
+        JEST_TIMEOUT:20000
+    },
+    'BLUEMIX_PRD':{
+        PORT: 80,
+        BASE_URL: 'https://elasa-chatbot.mybluemix.net',
+        AXIOS_TIMEOUT: 10000,
+        JEST_TIMEOUT:20000
+    },
+    'BLUEMIX_DEV':{
+        PORT: 80,
+        BASE_URL: 'https://elasa-chatbot-dev.mybluemix.net',
+        AXIOS_TIMEOUT: 10000,
+        JEST_TIMEOUT:20000
+    },
+};
+
+// const ACTIVE_ENV = 'LOCAL';
+// const ACTIVE_ENV = 'BLUEMIX_DEV';
+const ACTIVE_ENV = 'BLUEMIX_PRD';
+const ENV = envMap[ACTIVE_ENV];
 
 const axiosClient = axios.create({
-    baseURL: `${BASE_URL}${PORT && PORT !== 80 ? ':' + PORT : ''}`,
-    timeout: 10000,
+    baseURL: `${ENV.BASE_URL}${ENV.PORT && ENV.PORT !== 80 ? ':' + ENV.PORT : ''}`,
+    timeout: ENV.AXIOS_TIMEOUT,
     // headers: {'X-Custom-Header': 'foobar'}
 });
 
-jest.setTimeout(20000);
+jest.setTimeout(ENV.JEST_TIMEOUT);
 
 const buildNewSession = () => ({
     conversationId: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
